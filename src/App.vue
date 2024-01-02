@@ -1,7 +1,9 @@
 <template>
-  <nav>
-    <router-link to="/">FamilyWings</router-link> |
-    <router-link to="/about">About</router-link>
+  <nav class="navbar">
+    <div class="container">
+      <router-link to="/">FamilyWings</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
   </nav>
   <router-view />
 </template>
@@ -26,5 +28,18 @@ nav {
       color: #42b983;
     }
   }
+}
+</style>
+
+<style scoped>
+.navbar {
+  background-color: #9400d3;
+  padding: 10px 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  color: white;
 }
 </style>
