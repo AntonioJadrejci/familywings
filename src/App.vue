@@ -1,8 +1,8 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <router-link to="/">FamilyWings</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/" class="no-underline">FamilyWings</router-link> |
+      <router-link to="/" class="no-underline">About</router-link>
     </div>
   </nav>
   <router-view />
@@ -34,12 +34,16 @@ nav {
 <style scoped>
 .navbar {
   background-color: #9400d3;
-  padding: 10px 0;
+  padding: 30px 0;
 }
 
 .container {
   display: flex;
   justify-content: space-around;
   color: white;
+}
+
+.no-underline {
+  text-decoration: none;
 }
 </style>
