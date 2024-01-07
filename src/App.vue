@@ -1,8 +1,14 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <router-link to="/" class="no-underline">FamilyWings</router-link> |
-      <router-link to="/" class="no-underline">About</router-link>
+      <router-link to="/" class="no-underline"
+        ><img
+          src="@/assets/Naslov4.png"
+          alt="FamilyWings"
+          class="router-link-image"
+      /></router-link>
+
+      <router-link to="/about" class="no-underline2">About</router-link>
     </div>
   </nav>
   <router-view />
@@ -45,5 +51,17 @@ nav {
 
 .no-underline {
   text-decoration: none;
+  margin-right: 700px;
+}
+
+.no-underline2 {
+  text-decoration: none;
+  margin-left: 700px;
+}
+
+.router-link-image {
+  width: 250px;
+  height: auto;
+  /* Add other necessary styles for the image */
 }
 </style>
