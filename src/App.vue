@@ -9,6 +9,9 @@
       /></router-link>
 
       <router-link to="/about" class="no-underline2">About</router-link>
+      <button class="menu-button" @click="toggleMenu">
+        <font-awesome-icon icon="bars" class="menu-icon" />
+      </button>
     </div>
   </nav>
   <router-view />
@@ -63,5 +66,20 @@ nav {
   width: 250px;
   height: auto;
   /* Add other necessary styles for the image */
+}
+
+.menu-icon {
+  font-size: 35px;
+  color: black;
+  cursor: pointer;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 20px;
 }
 </style>
