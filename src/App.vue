@@ -59,17 +59,18 @@ nav {
 
 .no-underline2 {
   text-decoration: none;
-  margin-left: 700px;
+  margin-left: 400px;
 }
 
 .router-link-image {
   width: 250px;
   height: auto;
-  /* Add other necessary styles for the image */
 }
 
 .menu-icon {
-  font-size: 35px;
+  font-size: 2rem;
+  height: 2rem;
+  width: 2rem;
   color: black;
   cursor: pointer;
 }
