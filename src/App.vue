@@ -13,9 +13,19 @@
         <font-awesome-icon icon="bars" class="menu-icon" />
       </button>
     </div>
+    <Flight :imageSrc="'/assets/Flight.jpg'" />
   </nav>
   <router-view />
 </template>
+
+<script>
+import Flight from "@/components/Flight.vue";
+export default {
+  components: {
+    Flight,
+  },
+};
+</script>
 
 <style lang="scss">
 #app {
@@ -44,6 +54,7 @@ nav {
 .navbar {
   background-color: #9400d3;
   padding: 30px 0;
+  height: 80px;
 }
 
 .container {
