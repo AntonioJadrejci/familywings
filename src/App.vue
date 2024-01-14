@@ -8,7 +8,6 @@
           class="router-link-image"
       /></router-link>
 
-      <router-link to="/about" class="no-underline2">About</router-link>
       <button class="menu-button" @click="toggleMenu">
         <font-awesome-icon icon="bars" class="menu-icon" />
       </button>
@@ -54,23 +53,18 @@ nav {
 .navbar {
   background-color: #9400d3;
   padding: 30px 0;
-  height: 80px;
+  height: 60px;
 }
 
 .container {
   display: flex;
-  justify-content: space-around;
-  color: white;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px; /* Allow items to wrap to the next line if needed */
 }
 
 .no-underline {
   text-decoration: none;
-  margin-right: 700px;
-}
-
-.no-underline2 {
-  text-decoration: none;
-  margin-left: 400px;
 }
 
 .router-link-image {
@@ -91,7 +85,24 @@ nav {
   border: none;
   cursor: pointer;
   padding: 0;
-  margin: 0;
+  margin-left: 20px;
   font-size: 20px;
+}
+
+@media screen and (max-width: 240px) {
+  .container {
+    flex-direction: column; /* Stack items vertically for smaller screens */
+    align-items: flex-start; /* Align items to the start for smaller screens */
+  }
+
+  .no-underline2 {
+    margin-left: 0; /* Reset margin for smaller screens */
+    margin-top: 10px; /* Add space between items for smaller screens */
+  }
+
+  .menu-button {
+    margin-left: 0; /* Reset margin for smaller screens */
+    margin-top: 10px; /* Add space between the button and other items */
+  }
 }
 </style>
