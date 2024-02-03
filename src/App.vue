@@ -97,7 +97,7 @@ nav {
   right: -100%; /* Initially hide the menu off-screen */
   width: 20%;
   height: 120vh;
-  background-color: #42b983;
+  background-color: #00d3e0;
   transition: right 0.3s ease;
   z-index: 100; /* Place it above the overlay */
 
