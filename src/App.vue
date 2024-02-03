@@ -11,6 +11,12 @@
       <button class="menu-button" @click="toggleMenu">
         <font-awesome-icon icon="bars" class="menu-icon" />
       </button>
+      <div
+        class="menu-overlay"
+        :class="{ 'menu-open': isMenuOpen }"
+        @click="closeMenu"
+      ></div>
+
       <div class="menu" :class="{ 'menu-open': isMenuOpen }">
         <!-- Add your menu content here -->
       </div>
@@ -35,11 +41,19 @@ export default {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    closeMenu() {
+      this.isMenuOpen = false;
+    },
   },
 };
 </script>
 
 <style lang="scss">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -60,15 +74,32 @@ nav {
     }
   }
 }
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background */
+  display: none;
+  z-index: 99; /* Place it above other content */
+  transition: opacity 0.3s ease;
+
+  &.menu-open {
+    display: block; /* Show the overlay when the menu is open */
+    opacity: 1;
+  }
+}
 
 .menu {
   position: fixed;
-  top: 120px; /* Adjust this value based on your header height */
+  top: 0px;
   right: -100%; /* Initially hide the menu off-screen */
-  width: 30%; /* Adjust the width as needed */
-  height: 100vh;
+  width: 20%;
+  height: 120vh;
   background-color: #42b983;
-  transition: right 0.3s ease; /* Add a smooth transition effect */
+  transition: right 0.3s ease;
+  z-index: 100; /* Place it above the overlay */
 
   &.menu-open {
     right: 0; /* Slide the menu into view when it's open */
@@ -77,10 +108,15 @@ nav {
 </style>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .navbar {
   background-color: #9400d3;
-  padding: 30px 0;
-  height: 60px;
+  padding: 5px 0;
+  height: 80px;
 }
 
 .container {

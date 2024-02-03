@@ -9,6 +9,11 @@ export default {
 };
 </script>
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .home-background {
   background-image: url("../assets/A321.jpg");
   background-size: cover;
