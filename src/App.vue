@@ -11,6 +11,9 @@
       <button class="menu-button" @click="toggleMenu">
         <font-awesome-icon icon="bars" class="menu-icon" />
       </button>
+      <div class="menu" :class="{ 'menu-open': isMenuOpen }">
+        <!-- Add your menu content here -->
+      </div>
     </div>
     <Flight :imageSrc="'/assets/Flight.jpg'" />
   </nav>
@@ -22,6 +25,16 @@ import Flight from "@/components/Flight.vue";
 export default {
   components: {
     Flight,
+  },
+  data() {
+    return {
+      isMenuOpen: false,
+    };
+  },
+  methods: {
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
+    },
   },
 };
 </script>
@@ -45,6 +58,20 @@ nav {
     &.router-link-exact-active {
       color: #42b983;
     }
+  }
+}
+
+.menu {
+  position: fixed;
+  top: 120px; /* Adjust this value based on your header height */
+  right: -100%; /* Initially hide the menu off-screen */
+  width: 30%; /* Adjust the width as needed */
+  height: 100vh;
+  background-color: #42b983;
+  transition: right 0.3s ease; /* Add a smooth transition effect */
+
+  &.menu-open {
+    right: 0; /* Slide the menu into view when it's open */
   }
 }
 </style>
