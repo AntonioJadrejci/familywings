@@ -40,9 +40,14 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+
+      // Update body overflow style
+      document.body.style.overflow = this.isMenuOpen ? "hidden" : "auto";
     },
     closeMenu() {
       this.isMenuOpen = false;
+      // Revert body overflow style when menu is closed
+      document.body.style.overflow = "auto";
     },
   },
 };
