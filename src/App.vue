@@ -18,7 +18,9 @@
       ></div>
 
       <div class="menu" :class="{ 'menu-open': isMenuOpen }">
-        <!-- Add your menu content here -->
+        <router-link to="/about" class="menu-link" @click="closeMenu">
+          About us
+        </router-link>
       </div>
     </div>
     <Flight :imageSrc="'/assets/Flight.jpg'" />
@@ -27,10 +29,12 @@
 </template>
 
 <script>
+import BackgroundContainer from "@/components/BackgroundContainer.vue";
 import Flight from "@/components/Flight.vue";
 export default {
   components: {
     Flight,
+    BackgroundContainer,
   },
   data() {
     return {
@@ -109,6 +113,19 @@ nav {
   &.menu-open {
     right: 0; /* Slide the menu into view when it's open */
   }
+
+  .menu-link {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 30px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #333; // Add a different background color on hover
+    }
+  }
 }
 </style>
 
@@ -159,18 +176,18 @@ nav {
 
 @media screen and (max-width: 240px) {
   .container {
-    flex-direction: column; /* Stack items vertically for smaller screens */
-    align-items: flex-start; /* Align items to the start for smaller screens */
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .no-underline2 {
-    margin-left: 0; /* Reset margin for smaller screens */
-    margin-top: 10px; /* Add space between items for smaller screens */
+    margin-left: 0;
+    margin-top: 10px;
   }
 
   .menu-button {
-    margin-left: 0; /* Reset margin for smaller screens */
-    margin-top: 10px; /* Add space between the button and other items */
+    margin-left: 0;
+    margin-top: 10px;
   }
 }
 </style>

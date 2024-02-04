@@ -1,15 +1,11 @@
 <template>
-  <div class="home-background"></div>
+  <div class="background-container">
+    <slot></slot>
+  </div>
 </template>
 
-<script>
-export default {
-  name: "HomeView",
-  components: {},
-};
-</script>
 <style scoped>
-.home-background {
+.background-container {
   background-image: url("~@/assets/A321.jpg");
   background-size: cover;
   background-position: center;
