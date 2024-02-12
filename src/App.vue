@@ -21,6 +21,12 @@
         <router-link to="/about" class="menu-link" @click="closeMenu">
           About us
         </router-link>
+        <router-link to="/login" class="menu-link" @click="closeMenu"
+          >Login</router-link
+        >
+        <router-link to="/register" class="menu-link" @click="closeMenu"
+          >Registration</router-link
+        >
       </div>
     </div>
     <Flight :imageSrc="'/assets/Flight.jpg'" />
@@ -31,10 +37,14 @@
 <script>
 import BackgroundContainer from "@/components/BackgroundContainer.vue";
 import Flight from "@/components/Flight.vue";
+import Login from "@/components/Login.vue";
+import Register from "@/components/Register.vue";
 export default {
   components: {
     Flight,
     BackgroundContainer,
+    Login,
+    Register,
   },
   data() {
     return {
