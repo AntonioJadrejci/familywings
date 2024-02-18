@@ -50,6 +50,8 @@ export default {
   border-radius: 0 !important;
   color: #fff;
   padding: 50px;
+  min-width: 1000px;
+  min-height: 400px;
 }
 
 .square {
