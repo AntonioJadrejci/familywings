@@ -29,8 +29,8 @@ export default {
 
 <style scoped>
 .square-button {
-  width: 500px; /* Set the width and height as needed */
-  height: 500px;
+  width: 200px; /* Set the width and height as needed */
+  height: 200px;
   background-color: #9400d3; /* Set the background color */
   display: flex;
   justify-content: center;
@@ -43,7 +43,5 @@ export default {
   max-height: 100%;
   width: 100%; /* Adjust the image size as needed */
   height: auto;
-  margin-top: 800px;
-  margin-right: -300px;
 }
 </style>

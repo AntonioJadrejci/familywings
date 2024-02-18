@@ -29,19 +29,16 @@
         >
       </div>
     </div>
-    <Flight :imageSrc="'/assets/Flight.jpg'" />
   </nav>
   <router-view />
 </template>
 
 <script>
 import BackgroundContainer from "@/components/BackgroundContainer.vue";
-import Flight from "@/components/Flight.vue";
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
 export default {
   components: {
-    Flight,
     BackgroundContainer,
     Login,
     Register,
@@ -149,6 +146,7 @@ nav {
   background-color: #9400d3;
   padding: 5px 0;
   height: 80px;
+  overflow: hidden;
 }
 
 .container {
