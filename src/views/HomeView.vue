@@ -1,7 +1,12 @@
 <template>
   <div class="home-background">
     <div class="squares-container">
-      <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
+      <div
+        class="square"
+        @mouseover="scaleUp"
+        @mouseout="scaleDown"
+        @click="showFlightSquare"
+      >
         <img src="@/assets/plane.webp" alt="Image 1" class="square-image" />
         <button class="square-button">Flight</button>
       </div>
@@ -14,19 +19,27 @@
         <button class="square-button">Shuttle Bus</button>
       </div>
     </div>
+    <Flight ref="flightComponent" />
   </div>
 </template>
 
 <script>
+import Flight from "@/components/Flight.vue";
 export default {
   name: "HomeView",
-  components: {},
+  components: { Flight },
   methods: {
     scaleUp(event) {
       event.currentTarget.classList.add("hovered");
     },
     scaleDown(event) {
       event.currentTarget.classList.remove("hovered");
+    },
+    showFlightSquare() {
+      // Set showFlightSquare to true to display the Flight component
+      if (this.$refs.flightComponent) {
+        this.$refs.flightComponent.showFlightSquare = true;
+      }
     },
   },
 };
