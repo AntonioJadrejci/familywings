@@ -3,13 +3,13 @@
     <div class="square">
       <div class="image-container">
         <img
-          src="@/assets/AboutPlane0.png"
+          src="@/assets/AboutPlane.png"
           alt="Left Image"
           class="left-image"
         />
         <div class="space"></div>
         <img
-          src="@/assets/AboutPlane.png"
+          src="@/assets/AboutPlane0.png"
           alt="Right Image"
           class="right-image"
         />

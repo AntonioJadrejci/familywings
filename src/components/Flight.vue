@@ -5,8 +5,14 @@
     <div class="image-container">
       <img
         src="@/assets/AboutPlane.png"
-        alt="Flight Image"
-        class="flight-image"
+        alt="Flight Image Left"
+        class="left-image"
+      />
+      <div class="space"></div>
+      <img
+        src="@/assets/AboutPlane0.png"
+        alt="Flight Image Right"
+        class="right-image"
       />
     </div>
     <div class="text-container">
@@ -14,6 +20,11 @@
       <p>
         We provide excellent flight services to various destinations worldwide.
       </p>
+      <div class="purple-squares-container">
+        <div class="purple-square"></div>
+        <div class="purple-square"></div>
+        <div class="purple-square"></div>
+      </div>
       <button class="back-button" @click="hideFlightSquare">Close</button>
     </div>
   </div>
@@ -36,7 +47,7 @@ export default {
 
 <style scoped>
 .flight-square {
-  background-color: #00d3e0;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 30px;
   border-radius: 10px;
   position: fixed;
@@ -44,6 +55,12 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
+  min-width: 1600px;
+  min-height: 700px;
+  height: 700px; /* Set a fixed height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .image-container {
@@ -52,13 +69,19 @@ export default {
   margin-bottom: 20px;
 }
 
-.flight-image {
+.left-image,
+.right-image {
   width: 200px;
   height: auto;
 }
 
+.space {
+  width: 800px; /* Adjust space between images */
+}
+
 .text-container {
   text-align: center;
+  position: relative;
 }
 
 .back-button {
@@ -69,5 +92,22 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  position: absolute; /* Position the button absolutely */
+  bottom: -450px; /* Adjust bottom spacing as needed */
+  left: 50%; /* Center the button horizontally */
+  transform: translateX(-50%); /* Center the button horizontally */
+}
+.purple-squares-container {
+  position: absolute;
+  top: calc(50% + 100px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.purple-square {
+  width: 500px;
+  height: 50px;
+  background-color: #9400d3;
+  margin-bottom: 50px; /* Adjust spacing between squares */
 }
 </style>
