@@ -21,9 +21,17 @@
         We provide excellent flight services to various destinations worldwide.
       </p>
       <div class="purple-squares-container">
-        <div class="purple-square"></div>
-        <div class="purple-square"></div>
-        <div class="purple-square"></div>
+        <div class="purple-square">
+          <div class="half-text">Origin</div>
+          <div class="half-text">Destination</div>
+        </div>
+        <div class="purple-square">
+          <div class="half-text">Departure</div>
+          <div class="half-text">Return</div>
+        </div>
+        <div class="purple-square">
+          <div class="half-text">Passengers</div>
+        </div>
       </div>
       <button class="back-button" @click="hideFlightSquare">Close</button>
     </div>
@@ -104,10 +112,42 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 .purple-square {
+  position: relative;
   width: 500px;
-  height: 50px;
+  height: 70px;
   background-color: #9400d3;
   margin-bottom: 50px; /* Adjust spacing between squares */
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.purple-square:first-child {
+  width: 500px; /* Width of the first two squares */
+}
+
+.purple-square:last-child {
+  width: 400px; /* Width of the third square */
+}
+
+.purple-square:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background-color: #000000;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+.half-text {
+  width: calc(50% - 10px); /* Adjust text width */
+  text-align: center;
+  color: white; /* Change font color to white */
+  font-size: 18px; /* Set font size */
+  height: 100;
 }
 </style>
