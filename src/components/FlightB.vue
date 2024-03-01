@@ -1,74 +1,61 @@
-<!-- Flight.vue -->
-
 <template>
-  <div>
-    <div class="flight-square" v-if="showFlightSquare">
-      <div class="image-container">
-        <img
-          src="@/assets/AboutPlane.png"
-          alt="Flight Image Left"
-          class="left-image"
-        />
-        <div class="space"></div>
-        <img
-          src="@/assets/AboutPlane0.png"
-          alt="Flight Image Right"
-          class="right-image"
-        />
+  <div class="flight-squareB" v-if="showFlightSquareB">
+    <div class="image-container">
+      <img
+        src="@/assets/AboutPlane.png"
+        alt="Flight Image Left"
+        class="left-image"
+      />
+      <div class="space"></div>
+      <img
+        src="@/assets/AboutPlane0.png"
+        alt="Flight Image Right"
+        class="right-image"
+      />
+    </div>
+    <div class="text-container">
+      <h1>Welcome to Flight Services</h1>
+      <p>
+        We provide excellent flight services to various destinations worldwide.
+      </p>
+      <div class="purple-squares-container">
+        <div class="purple-square">
+          <div class="half-text">London Gatwick (LGW) - Pula (PUY)</div>
+          <div class="half-text">Flight Price: 105$</div>
+        </div>
+        <div class="purple-square">
+          <div class="half-text">Pula (PUY) - London Gatwick (LGW)</div>
+          <div class="half-text">Flight Price: 105$</div>
+        </div>
+        <div class="purple-square">
+          <div class="half-text">Passengers</div>
+        </div>
       </div>
-      <div class="text-container">
-        <h1>Welcome to Flight Services</h1>
-        <p>
-          We provide excellent flight services to various destinations
-          worldwide.
-        </p>
-        <div class="purple-squares-container">
-          <div class="purple-square">
-            <div class="half-text">Origin</div>
-            <div class="half-text">Destination</div>
-          </div>
-          <div class="purple-square">
-            <div class="half-text">Departure</div>
-            <div class="half-text">Return</div>
-          </div>
-          <div class="purple-square">
-            <div class="half-text">Passengers</div>
-          </div>
-        </div>
-        <div class="button-container">
-          <button class="back-button" @click="hideFlightSquare">Close</button>
-          <button class="next-button" @click="showFlightSquareB">Next</button>
-        </div>
+      <div class="button-container">
+        <button class="back-button" @click="hideFlightSquareB">Close</button>
+        <button class="next-button">Next</button>
       </div>
     </div>
-    <FlightB ref="flightBComponent"></FlightB>
   </div>
 </template>
 
 <script>
-import FlightB from "@/components/FlightB.vue";
 export default {
-  components: { FlightB },
   data() {
     return {
-      showFlightSquare: false,
+      showFlightSquareB: false,
     };
   },
   methods: {
-    hideFlightSquare() {
-      this.showFlightSquare = false;
-    },
-    showFlightSquareB() {
-      // Set showFlightSquareB to true to display the FlightB component
-      this.showFlightSquare = false; // Hide current component
-      this.$refs.flightBComponent.showFlightSquareB = true; // Show FlightB component
+    hideFlightSquareB() {
+      this.showFlightSquareB = false;
     },
   },
 };
 </script>
 
 <style scoped>
-.flight-square {
+.flight-squareB {
   background-color: rgba(255, 255, 255, 0.9);
   padding: 30px;
   border-radius: 10px;
@@ -84,7 +71,6 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-
 .image-container {
   display: flex;
   justify-content: center;
@@ -115,7 +101,7 @@ export default {
 
 .purple-square {
   position: relative;
-  width: 900px;
+  width: 1200px;
   height: 70px;
   background-color: #9400d3;
   margin-bottom: 40px; /* Adjust spacing between squares */
@@ -126,7 +112,7 @@ export default {
 }
 
 .purple-square:first-child {
-  width: 900px; /* Width of the first two squares */
+  width: 1200px; /* Width of the first two squares */
 }
 
 .purple-square:last-child {
