@@ -6,6 +6,7 @@
           src="@/assets/Naslov4.png"
           alt="FamilyWings"
           class="router-link-image"
+          @click="handleLinkClick"
       /></router-link>
 
       <button class="menu-button" @click="toggleMenu">
@@ -59,6 +60,16 @@ export default {
       this.isMenuOpen = false;
       // Revert body overflow style when menu is closed
       document.body.style.overflow = "auto";
+    },
+    handleLinkClick() {
+      // Check if the current route is already the home page
+      if (this.$route.path !== "/") {
+        // If not, navigate to the home page
+        this.$router.push("/");
+      } else {
+        // If already on the home page, force page refresh
+        window.location.reload();
+      }
     },
   },
 };

@@ -37,11 +37,14 @@
         </div>
         <div class="button-container">
           <button class="back-button" @click="hideFlightSquare">Close</button>
-          <button class="next-button" @click="showFlightSquareB">Next</button>
+          <button class="next-button" @click="showFlightSquareComponent">
+            Next
+          </button>
         </div>
       </div>
     </div>
-    <FlightB ref="flightBComponent"></FlightB>
+
+    <FlightB ref="flightBComponent" @back="handleFlightBBack"></FlightB>
   </div>
 </template>
 
@@ -58,10 +61,19 @@ export default {
     hideFlightSquare() {
       this.showFlightSquare = false;
     },
-    showFlightSquareB() {
-      // Set showFlightSquareB to true to display the FlightB component
-      this.showFlightSquare = false; // Hide current component
-      this.$refs.flightBComponent.showFlightSquareB = true; // Show FlightB component
+    showFlightSquareComponent() {
+      // Hide current Flight component
+      this.showFlightSquare = false;
+
+      // Show FlightB component
+      if (this.$refs.flightBComponent) {
+        this.$refs.flightBComponent.showFlightSquareB = true;
+      }
+    },
+    handleFlightBBack() {
+      // Hide FlightB component and show Flight component
+      this.showFlightSquare = true;
+      this.$refs.flightBComponent.showFlightSquareB = false;
     },
   },
 };

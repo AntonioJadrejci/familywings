@@ -25,6 +25,7 @@
 
 <script>
 import Flight from "@/components/Flight.vue";
+
 export default {
   name: "HomeView",
   components: { Flight },

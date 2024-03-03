@@ -14,25 +14,24 @@
       />
     </div>
     <div class="text-container">
-      <h1>Welcome to Flight Services</h1>
-      <p>
-        We provide excellent flight services to various destinations worldwide.
-      </p>
       <div class="purple-squares-container">
+        <div class="date-button">
+          <div class="half-text">3.3.2024.</div>
+        </div>
         <div class="purple-square">
           <div class="half-text">London Gatwick (LGW) - Pula (PUY)</div>
           <div class="half-text">Flight Price: 105$</div>
+        </div>
+        <div class="date-button">
+          <div class="half-text">10.3.2024.</div>
         </div>
         <div class="purple-square">
           <div class="half-text">Pula (PUY) - London Gatwick (LGW)</div>
           <div class="half-text">Flight Price: 105$</div>
         </div>
-        <div class="purple-square">
-          <div class="half-text">Passengers</div>
-        </div>
       </div>
       <div class="button-container">
-        <button class="back-button" @click="hideFlightSquareB">Close</button>
+        <button class="back-button" @click="goBack">Back</button>
         <button class="next-button">Next</button>
       </div>
     </div>
@@ -49,6 +48,10 @@ export default {
   methods: {
     hideFlightSquareB() {
       this.showFlightSquareB = false;
+    },
+    goBack() {
+      this.showFlightSquareB = false;
+      this.$emit("back");
     },
   },
 };
@@ -111,24 +114,6 @@ export default {
   align-items: center;
 }
 
-.purple-square:first-child {
-  width: 1200px; /* Width of the first two squares */
-}
-
-.purple-square:last-child {
-  width: 400px; /* Width of the third square */
-}
-
-.purple-square:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
 .half-text {
   width: calc(50% - 10px); /* Adjust text width */
   text-align: center;
@@ -136,6 +121,18 @@ export default {
   font-size: 18px; /* Set font size */
   height: 100;
 }
+
+.date-button {
+  background-color: #00d3e0;
+  color: white;
+  border: none;
+  height: 50px;
+  padding: 20px 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 .next-button {
   background-color: #00d3e0;
   color: white;
