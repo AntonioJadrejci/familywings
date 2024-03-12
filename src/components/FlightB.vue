@@ -32,14 +32,14 @@
       </div>
       <div class="button-container">
         <button class="back-button" @click="goBack">Back</button>
-        <button class="next-button">Next</button>
+        <button class="next-button" @click="showFlightCComponent">Next</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import FlightC from "@/components/FlightB.vue";
+import FlightC from "@/components/FlightC.vue";
 export default {
   components: { FlightC },
   data() {
@@ -54,6 +54,10 @@ export default {
     goBack() {
       this.showFlightSquareB = false;
       this.$emit("back");
+    },
+    showFlightCComponent() {
+      this.showFlightSquareB = false;
+      this.$emit("show-flight-c");
     },
   },
 };

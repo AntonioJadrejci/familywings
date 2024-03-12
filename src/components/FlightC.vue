@@ -1,5 +1,5 @@
-template>
-  <div class="flight-squareB" v-if="showFlightSquareB">
+<template>
+  <div class="flight-squareC" v-if="showFlightCComponent">
     <div class="image-container">
       <img
         src="@/assets/AboutPlane.png"
@@ -18,10 +18,7 @@ template>
         <div class="date-button">
           <div class="half-text">3.3.2024.</div>
         </div>
-        <div class="purple-square">
-          <div class="half-text">FLIGHTC</div>
-          <div class="half-text">Flight Price: 105$</div>
-        </div>
+
         <div class="date-button">
           <div class="half-text">10.3.2024.</div>
         </div>
@@ -39,12 +36,10 @@ template>
 </template>
 
 <script>
-import FlightB from "@/components/FlightB.vue";
 export default {
-  components: { FlightB },
   data() {
     return {
-      showFlightSquare: false,
+      showFlightCComponent: false,
     };
   },
   methods: {},
