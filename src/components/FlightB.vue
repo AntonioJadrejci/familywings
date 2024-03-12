@@ -1,4 +1,4 @@
-<template>
+“<template>
   <div class="flight-squareB" v-if="showFlightSquareB">
     <div class="image-container">
       <img
@@ -39,7 +39,9 @@
 </template>
 
 <script>
+import FlightC from "@/components/FlightB.vue";
 export default {
+  components: { FlightC },
   data() {
     return {
       showFlightSquareB: false,

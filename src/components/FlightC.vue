@@ -1,4 +1,4 @@
-<template>
+template>
   <div class="flight-squareB" v-if="showFlightSquareB">
     <div class="image-container">
       <img
