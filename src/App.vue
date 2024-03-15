@@ -180,7 +180,7 @@ nav {
   font-size: 2rem;
   height: 2rem;
   width: 2rem;
-  color: black;
+  color: #00d3e0;
   cursor: pointer;
 }
 

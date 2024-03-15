@@ -1,7 +1,6 @@
-“<!-- Flight.vue -->
-
 <template>
   <div>
+    <!-- Flight Square -->
     <div class="flight-square" v-if="showFlightSquare">
       <div class="image-container">
         <img
@@ -37,47 +36,122 @@
         </div>
         <div class="button-container">
           <button class="back-button" @click="hideFlightSquare">Close</button>
-          <button class="next-button" @click="showFlightSquareComponent">
+          <button class="next-button" @click="showFlightBComponent">
             Next
           </button>
         </div>
       </div>
     </div>
 
-    <FlightB ref="flightBComponent" @back="handleFlightBBack"></FlightB>
+    <!-- FlightB Square -->
+    <div class="flight-square" v-if="showFlightSquareB">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="purple-squares-container">
+          <div class="date-button">
+            <div class="half-text">3.3.2024.</div>
+          </div>
+          <div class="purple-squareB">
+            <div class="half-text">London Gatwick (LGW) - Pula (PUY)</div>
+            <div class="half-text">Flight Price: 105$</div>
+          </div>
+          <div class="date-button">
+            <div class="half-text">10.3.2024.</div>
+          </div>
+          <div class="purple-squareB">
+            <div class="half-text">Pula (PUY) - London Gatwick (LGW)</div>
+            <div class="half-text">Flight Price: 105$</div>
+          </div>
+        </div>
+        <div class="button-container">
+          <button class="back-button" @click="goBack">Back</button>
+          <button class="next-button" @click="showFlightCComponent">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FlightC Square -->
+    <div class="flight-square" v-if="showFlightSquareC">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="purple-squares-container">
+          <div class="date-button">
+            <div class="half-text">3.3.2024.</div>
+          </div>
+          <div class="date-button">
+            <div class="half-text">10.3.2024.</div>
+          </div>
+          <div class="purple-squareB">
+            <div class="half-text">Pula (PUY) - London Gatwick (LGW)</div>
+            <div class="half-text">Flight Price: 105$</div>
+          </div>
+        </div>
+        <div class="button-container">
+          <button class="back-button" @click="goBackToFlightB">Back</button>
+          <button class="next-button">Next</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
 <script>
-import FlightB from "@/components/FlightB.vue";
 export default {
-  components: { FlightB },
   data() {
     return {
       showFlightSquare: false,
+      showFlightSquareB: false,
+      showFlightSquareC: false,
     };
   },
   methods: {
     hideFlightSquare() {
       this.showFlightSquare = false;
     },
-    showFlightSquareComponent() {
-      // Hide current Flight component
-      this.showFlightSquare = false;
-
-      // Show FlightB component
-      if (this.$refs.flightBComponent) {
-        this.$refs.flightBComponent.showFlightSquareB = true;
-      }
+    showFlightBComponent() {
+      this.showFlightSquareB = true;
     },
-    handleFlightBBack() {
-      // Hide FlightB component and show Flight component
+    goBack() {
+      this.showFlightSquareB = false;
       this.showFlightSquare = true;
-      this.$refs.flightBComponent.showFlightSquareB = false;
+    },
+    showFlightCComponent() {
+      this.showFlightSquareB = false;
+      this.showFlightSquareC = true;
+    },
+    goBackToFlightB() {
+      this.showFlightSquareC = false;
+      this.showFlightSquareB = true;
     },
   },
 };
 </script>
+
 
 <style scoped>
 .flight-square {
@@ -96,7 +170,38 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-
+.flight-squareB {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  min-width: 1600px;
+  min-height: 700px;
+  height: 700px; /* Set a fixed height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.flight-squareC {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  min-width: 1600px;
+  min-height: 700px;
+  height: 700px; /* Set a fixed height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .image-container {
   display: flex;
   justify-content: center;
@@ -136,6 +241,18 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.purple-squareB {
+  position: relative;
+  width: 1200px;
+  height: 70px;
+  background-color: #9400d3;
+
+  margin-bottom: 40px; /* Adjust spacing between squares */
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .purple-square:first-child {
   width: 900px; /* Width of the first two squares */
@@ -162,6 +279,17 @@ export default {
   font-size: 18px; /* Set font size */
   height: 100;
 }
+.date-button {
+  background-color: #00d3e0;
+  color: white;
+  border: none;
+  height: 50px;
+  padding: 20px 50px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 .next-button {
   background-color: #00d3e0;
   color: white;

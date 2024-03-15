@@ -19,17 +19,16 @@
         <button class="square-button">Shuttle Bus</button>
       </div>
     </div>
-    <Flight ref="flightComponent" @show-flight-c="showFlightC"></Flight>
+    <Flight ref="flightComponent"></Flight>
   </div>
 </template>
 
 <script>
 import Flight from "@/components/Flight.vue";
-import FlightC from "@/components/FlightC.vue";
 
 export default {
   name: "HomeView",
-  components: { Flight, FlightC },
+  components: { Flight },
   methods: {
     scaleUp(event) {
       event.currentTarget.classList.add("hovered");
@@ -42,10 +41,6 @@ export default {
       if (this.$refs.flightComponent) {
         this.$refs.flightComponent.showFlightSquare = true;
       }
-    },
-    showFlightC() {
-      // Programmatically navigate to FlightC.vue
-      this.$router.push({ name: "FlightC" });
     },
   },
 };
