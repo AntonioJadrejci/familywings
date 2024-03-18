@@ -139,7 +139,41 @@
       </div>
       <div class="button-container">
         <button class="back-button" @click="goBackToFlightB">Back</button>
-        <button class="next-button">Next</button>
+        <button class="next-button" @click="showFlightDComponent">Next</button>
+      </div>
+    </div>
+    <!-- FlightD Square -->
+    <div class="flight-square" v-if="showFlightSquareD">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="services-container">
+        <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
+          <img src="@/assets/RentaCar.jpg" alt="Image 1" class="square-image" />
+          <button class="square-button">Rent a Car</button>
+        </div>
+        <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
+          <img
+            src="@/assets/ShuttleBus.jpg"
+            alt="Image 1"
+            class="square-image"
+          />
+          <button class="square-button">Shuttle Bus</button>
+        </div>
+      </div>
+      <div class="button-container">
+        <button class="back-button" @click="goBackToFlightC">Back</button>
+        <button class="next-button" @click="showFlightDComponent">Skip</button>
       </div>
     </div>
   </div>
@@ -151,6 +185,7 @@ export default {
       showFlightSquare: false,
       showFlightSquareB: false,
       showFlightSquareC: false,
+      showFlightSquareD: false,
     };
   },
   methods: {
@@ -171,6 +206,14 @@ export default {
     goBackToFlightB() {
       this.showFlightSquareC = false;
       this.showFlightSquareB = true;
+    },
+    showFlightDComponent() {
+      this.showFlightSquareC = false;
+      this.showFlightSquareD = true;
+    },
+    goBackToFlightC() {
+      this.showFlightSquareD = false;
+      this.showFlightSquareC = true;
     },
   },
 };
@@ -444,23 +487,23 @@ export default {
   align-items: center;
   justify-content: space-around;
   padding: 10px;
-  margin-top: 20px; /* Adjust as needed */
-  background-color: #8a2be2; /* Adjust the purple color as needed */
-  border-radius: 25px; /* Rounded corners */
-  color: white; /* Text color */
+  margin-top: 20px;
+  background-color: #8a2be2;
+  border-radius: 25px;
+  color: white;
 }
 
 .special-purple-square span,
 .special-purple-square input {
-  margin: 0 5px; /* Adjust spacing around text and inputs */
-  color: white; /* Text color */
+  margin: 0 5px;
+  color: white;
 }
 
 .special-purple-square input {
-  width: 60px; /* Adjust width as needed */
-  padding: 5px; /* Padding inside inputs */
-  border: 1px solid #d3d3d3; /* Border color */
-  border-radius: 5px; /* Rounded corners for inputs */
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
   text-align: center;
 }
 
@@ -470,4 +513,58 @@ export default {
   -webkit-appearance: none; /* Removes default arrows from inputs */
 }
 /* FlightC CSS*/
+
+/* FlightD CSS */
+.squares-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.square {
+  width: 400px;
+  height: 340px;
+  background-color: #ffffff;
+  margin: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+.square-image {
+  width: 400px;
+  height: 300px;
+  margin-bottom: 100px;
+  border-radius: 10px;
+}
+
+.square-button {
+  width: 400px;
+  height: 50px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #9400d3;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 25px;
+}
+.hovered {
+  transform: scale(1.1);
+}
+.services-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+/* FlightD CSS */
 </style>
