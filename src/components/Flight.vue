@@ -173,7 +173,49 @@
       </div>
       <div class="button-container">
         <button class="back-button" @click="goBackToFlightC">Back</button>
-        <button class="next-button" @click="showFlightDComponent">Skip</button>
+        <button class="next-button" @click="showFlightEComponent">Skip</button>
+      </div>
+    </div>
+    <!-- FlightE Square -->
+    <div class="flight-square" v-if="showFlightSquareE">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div>
+        <h1>Way of Paying</h1>
+        <p>Debit or Credit Card</p>
+        <p>PayPal</p>
+      </div>
+      <div class="special-purple-square">
+        <span>First Name :</span>
+        <input type="number" v-model="bagNumber" min="1" />
+        <span>Last Name :</span>
+        <input type="number" v-model="bagWeight" min="1" />
+      </div>
+      <div class="special-purple-square">
+        <span>Credit Card Number :</span>
+        <input type="number" v-model="bagNumber" min="1" />
+        <span>Security Code :</span>
+        <input type="number" v-model="bagWeight" min="1" />
+      </div>
+      <div class="special-purple-square">
+        <span>Card Expiration :</span>
+        <input type="number" v-model="bagNumber" min="1" />
+      </div>
+
+      <div class="button-container">
+        <button class="back-button" @click="goBackToFlightD">Back</button>
+        <button class="next-button" @click="showFlightEComponent">Next</button>
       </div>
     </div>
   </div>
@@ -186,6 +228,9 @@ export default {
       showFlightSquareB: false,
       showFlightSquareC: false,
       showFlightSquareD: false,
+      showFlightSquareE: false,
+      bagNumber: 0,
+      bagWeight: 0,
     };
   },
   methods: {
@@ -214,6 +259,14 @@ export default {
     goBackToFlightC() {
       this.showFlightSquareD = false;
       this.showFlightSquareC = true;
+    },
+    showFlightEComponent() {
+      this.showFlightSquareD = false;
+      this.showFlightSquareE = true;
+    },
+    goBackToFlightD() {
+      this.showFlightSquareE = false;
+      this.showFlightSquareD = true;
     },
   },
 };
