@@ -21,7 +21,23 @@
           We provide excellent flight services to various destinations
           worldwide.
         </p>
+
         <div class="purple-squares-container">
+          <div class="dropdown">
+            <button
+              class="btn btn-secondary dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Dropdown button
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
           <div class="purple-square">
             <div class="half-text">Origin</div>
             <div class="half-text">Destination</div>
