@@ -207,9 +207,7 @@
         />
       </div>
       <div>
-        <h1>Way of Paying</h1>
-        <p>Debit or Credit Card</p>
-        <p>PayPal</p>
+        <h1>Debit Card Payment</h1>
       </div>
       <div class="special-purple-square">
         <span>First Name :</span>
