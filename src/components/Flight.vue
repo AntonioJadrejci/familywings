@@ -22,6 +22,142 @@
           worldwide.
         </p>
         <div class="purple-squares-container">
+          <!-- Prvi Button-->
+          <div class="row">
+            <div class="col">
+              <div class="dropdown">
+                <button
+                  class="btn btn-info btn-lg dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Origin
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="#">London (LGW)</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Paris (CDG)</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col">
+              <!-- Drugi Button -->
+              <div class="dropdown">
+                <a
+                  class="btn btn-info btn-lg dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Destination
+                </a>
+
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Another action</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- Treci Button-->
+            <div class="col">
+              <div class="dropdown">
+                <button
+                  class="btn btn-info btn-lg dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Departure
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="#">London (LGW)</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Paris (CDG)</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- Cetvrti Button-->
+            <div class="col">
+              <div class="dropdown">
+                <a
+                  class="btn btn-info btn-lg dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Ticket
+                </a>
+
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">One Way</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Return</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- Peti  Button-->
+            <div class="col">
+              <div class="dropdown">
+                <a
+                  class="btn btn-info btn-lg dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Date of Return
+                </a>
+
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">One Way</a></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Return</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sesti Button-->
+
+          <div class="dropdown">
+            <button
+              class="btn btn-info btn-lg dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Passengers
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </li>
+            </ul>
+          </div>
           <div class="purple-square">
             <div class="half-text">Origin</div>
             <div class="half-text">Destination</div>
