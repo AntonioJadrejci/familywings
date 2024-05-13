@@ -25,29 +25,31 @@
           <!-- Prvi Button-->
           <div class="row">
             <div class="col">
-              <div class="dropdown">
-                <button
-                  class="btn btn-info btn-lg dropdown-toggle"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Origin
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="#">London (LGW)</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">Paris (CDG)</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
-                  </li>
-                </ul>
+              <div class="col-md-6 mb-3">
+                <div class="dropdown">
+                  <button
+                    class="btn btn-info btn-lg dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Origin
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" href="#">London (LGW)</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">Paris (CDG)</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <div class="col">
+            <div class="col-md-6 mb-3">
               <!-- Drugi Button -->
               <div class="dropdown">
                 <a
@@ -61,18 +63,19 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">London (LGW)</a></li>
                   <li>
-                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Paris (CDG)</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Something else here</a>
+                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
                   </li>
                 </ul>
               </div>
             </div>
+
             <!-- Treci Button-->
-            <div class="col">
+            <div class="col-md-6 mb-3">
               <div class="dropdown">
                 <button
                   class="btn btn-info btn-lg dropdown-toggle"
@@ -84,19 +87,19 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="#">London (LGW)</a>
+                    <a class="dropdown-item" href="#">May 5th 12:00</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Paris (CDG)</a>
+                    <a class="dropdown-item" href="#">May 6th 12:00</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                    <a class="dropdown-item" href="#">May 8th 18:00</a>
                   </li>
                 </ul>
               </div>
             </div>
             <!-- Cetvrti Button-->
-            <div class="col">
+            <div class="col-md-6 mb-3">
               <div class="dropdown">
                 <a
                   class="btn btn-info btn-lg dropdown-toggle"
@@ -117,7 +120,7 @@
               </div>
             </div>
             <!-- Peti  Button-->
-            <div class="col">
+            <div class="col-md-6 mb-3">
               <div class="dropdown">
                 <a
                   class="btn btn-info btn-lg dropdown-toggle"
@@ -130,9 +133,9 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">One Way</a></li>
+                  <li><a class="dropdown-item" href="#">May 6th 12:00</a></li>
                   <li>
-                    <a class="dropdown-item" href="#">Return</a>
+                    <a class="dropdown-item" href="#">May 8th 18:00</a>
                   </li>
                 </ul>
               </div>
@@ -140,34 +143,24 @@
           </div>
 
           <!-- Sesti Button-->
-
-          <div class="dropdown">
-            <button
-              class="btn btn-info btn-lg dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Passengers
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </li>
-            </ul>
-          </div>
-          <div class="purple-square">
-            <div class="half-text">Origin</div>
-            <div class="half-text">Destination</div>
-          </div>
-          <div class="purple-square">
-            <div class="half-text">Departure</div>
-            <div class="half-text">Return</div>
-          </div>
-          <div class="purple-square">
-            <div class="half-text">Passengers</div>
+          <div class="col-md-6 mb-3">
+            <div class="dropdown">
+              <button
+                class="btn btn-info btn-lg dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Passengers
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">1</a></li>
+                <li><a class="dropdown-item" href="#">2</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">3</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="button-container">
