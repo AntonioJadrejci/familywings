@@ -12,6 +12,7 @@ import router from './router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Add FontAwesome icon to the library
 library.add(faBars);
@@ -26,3 +27,8 @@ app.component('font-awesome-icon', FontAwesomeIcon);
 // Mount the app and specify the element to mount on
 app.use(router);
 app.mount('#app');
+
+<style>
+    @import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+</style>

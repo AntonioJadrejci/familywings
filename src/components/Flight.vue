@@ -21,7 +21,12 @@
           We provide excellent flight services to various destinations
           worldwide.
         </p>
+
         <div class="purple-squares-container">
+          <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+          />
           <!-- Prvi Button-->
           <div class="row">
             <div class="col">
@@ -36,14 +41,13 @@
                     Origin
                   </button>
                   <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" href="#">London (LGW)</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">Paris (CDG)</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                    <li v-for="(airport, index) in airports" :key="index">
+                      <a
+                        class="dropdown-item"
+                        href="#"
+                        @click="selectOrigin(airport)"
+                        >{{ airport.name }} ({{ airport.code }})</a
+                      >
                     </li>
                   </ul>
                 </div>
@@ -63,39 +67,52 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">London (LGW)</a></li>
-                  <li>
-                    <a class="dropdown-item" href="#">Paris (CDG)</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">Madrid(MAD)</a>
+                  <li v-for="(airport, index) in filteredAirports" :key="index">
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="selectDestination(airport)"
+                      >{{ airport.name }} ({{ airport.code }})</a
+                    >
                   </li>
                 </ul>
               </div>
             </div>
+            <div class="row">
+              <div class="col-md-6">
+                <p>
+                  Selected Origin:
+                  {{ selectedOrigin ? selectedOrigin.name : "None" }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p>
+                  Selected Destination:
+                  {{ selectedDestination ? selectedDestination.name : "None" }}
+                </p>
+              </div>
+            </div>
 
-            <!-- Treci Button-->
-            <div class="col-md-6 mb-3">
-              <div class="dropdown">
+            <!-- Treci Button (Select Departure Date) -->
+            <div
+              v-show="ticketTypeSelected"
+              class="col-md-6 mb-3"
+              id="departure-datepicker"
+            >
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="departureDate"
+                  placeholder="Select Departure Date"
+                />
                 <button
-                  class="btn btn-info btn-lg dropdown-toggle"
+                  class="btn btn-outline-secondary"
                   type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+                  id="button-departure"
                 >
-                  Departure
+                  <i class="fa fa-calendar"></i>
                 </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="#">May 5th 12:00</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">May 6th 12:00</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#">May 8th 18:00</a>
-                  </li>
-                </ul>
               </div>
             </div>
             <!-- Cetvrti Button-->
@@ -112,32 +129,45 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">One Way</a></li>
                   <li>
-                    <a class="dropdown-item" href="#">Return</a>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="selectTicket('one-way')"
+                      >One Way</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="selectTicket('return')"
+                      >Return</a
+                    >
                   </li>
                 </ul>
               </div>
             </div>
-            <!-- Peti  Button-->
-            <div class="col-md-6 mb-3">
-              <div class="dropdown">
-                <a
-                  class="btn btn-info btn-lg dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+            <!-- Peti Button (Select Return Date) -->
+            <div
+              v-show="showReturnDate"
+              class="col-md-6 mb-3"
+              id="return-datepicker"
+            >
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="returnDate"
+                  placeholder="Select Return Date"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  id="button-return"
                 >
-                  Date of Return
-                </a>
-
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">May 6th 12:00</a></li>
-                  <li>
-                    <a class="dropdown-item" href="#">May 8th 18:00</a>
-                  </li>
-                </ul>
+                  <i class="fa fa-calendar"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -156,9 +186,7 @@
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="#">1</a></li>
                 <li><a class="dropdown-item" href="#">2</a></li>
-                <li>
-                  <a class="dropdown-item" href="#">3</a>
-                </li>
+                <li><a class="dropdown-item" href="#">3</a></li>
               </ul>
             </div>
           </div>
@@ -243,106 +271,57 @@
           <div class="luggage-details">
             <h3>Trolley Bag x 1</h3>
             <p>MAX 10 KG</p>
-            <p>55 x 40 x 23 cm</p>
-            <p>20 $</p>
+            <p>55 x 40 x 20 cm</p>
+            <p>FREE</p>
           </div>
         </div>
-        <div class="luggage-type selected">
-          <img src="@/assets/Baggage.png" alt="Checked-In Bag" />
+        <div class="luggage-type">
+          <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
-            <h3>Checked-In Bag x 6</h3>
-            <p>MAX 15 KG, 20 KG or 32 KG</p>
-            <p>55 x 40 x 23 cm</p>
-            <p>30, 50, 70 $</p>
+            <h3>Checked Bag x 1</h3>
+            <p>MAX 20 KG</p>
+            <p>99 x 119 x 171 cm</p>
+            <p>25 $</p>
           </div>
         </div>
-      </div>
-      <div class="special-purple-square">
-        <span>Number :</span>
-        <input type="number" v-model="bagNumber" min="1" />
-        <span>Weight :</span>
-        <input type="number" v-model="bagWeight" min="1" />
-        <span>Bag:</span>
-        <input type="number" v-model="bagWeight" min="1" />
-        <span>Kg</span>
+        <div class="luggage-type">
+          <img src="@/assets/Baggage.png" alt="Checked Bag" />
+          <div class="luggage-details">
+            <h3>Checked Bag x 2</h3>
+            <p>MAX 32 KG</p>
+            <p>81 x 119 x 171 cm</p>
+            <p>35 $</p>
+          </div>
+        </div>
       </div>
       <div class="button-container">
-        <button class="back-button" @click="goBackToFlightB">Back</button>
+        <button class="back-button" @click="goBackB">Back</button>
         <button class="next-button" @click="showFlightDComponent">Next</button>
       </div>
     </div>
+
     <!-- FlightD Square -->
     <div class="flight-square" v-if="showFlightSquareD">
-      <div class="image-container">
-        <img
-          src="@/assets/AboutPlane.png"
-          alt="Flight Image Left"
-          class="left-image"
-        />
-        <div class="space"></div>
-        <img
-          src="@/assets/AboutPlane0.png"
-          alt="Flight Image Right"
-          class="right-image"
-        />
-      </div>
-      <div class="services-container">
-        <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
-          <img src="@/assets/RentaCar.jpg" alt="Image 1" class="square-image" />
-          <button class="square-button">Rent a Car</button>
-        </div>
-        <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
-          <img
-            src="@/assets/ShuttleBus.jpg"
-            alt="Image 1"
-            class="square-image"
-          />
-          <button class="square-button">Shuttle Bus</button>
+      <div class="text-container">
+        <div class="text-content">
+          <h1>Payment Information</h1>
+          <div class="form-group">
+            <label for="credit-card">Credit Card Number</label>
+            <input type="text" id="credit-card" v-model="creditCardNumber" />
+          </div>
+          <div class="form-group">
+            <label for="expiration-date">Expiration Date</label>
+            <input type="text" id="expiration-date" v-model="expirationDate" />
+          </div>
+          <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="text" id="cvv" v-model="cvv" />
+          </div>
         </div>
       </div>
       <div class="button-container">
-        <button class="back-button" @click="goBackToFlightC">Back</button>
-        <button class="next-button" @click="showFlightEComponent">Skip</button>
-      </div>
-    </div>
-    <!-- FlightE Square -->
-    <div class="flight-square" v-if="showFlightSquareE">
-      <div class="image-container">
-        <img
-          src="@/assets/AboutPlane.png"
-          alt="Flight Image Left"
-          class="left-image"
-        />
-        <div class="space"></div>
-        <img
-          src="@/assets/AboutPlane0.png"
-          alt="Flight Image Right"
-          class="right-image"
-        />
-      </div>
-      <div>
-        <h1>Debit Card Payment</h1>
-      </div>
-      <div class="special-purple-square">
-        <span>First Name :</span>
-        <input type="number" v-model="bagNumber" min="1" />
-        <span>Last Name :</span>
-        <input type="number" v-model="bagWeight" min="1" />
-      </div>
-      <div class="special-purple-square">
-        <span>Credit Card Number :</span>
-        <input type="number" v-model="bagNumber" min="1" />
-        <span>Security Code :</span>
-        <input type="number" v-model="bagWeight" min="1" />
-      </div>
-      <div class="special-purple-square">
-        <span>Card Expiration :</span>
-        <input type="number" v-model="bagNumber" min="1" />
-      </div>
-
-      <div class="button-container">
-        <button class="back-button" @click="goBackToFlightD">Back</button>
-        <button class="next-button" @click="showFlightEComponent">Next</button>
+        <button class="back-button" @click="goBackC">Back</button>
+        <button class="next-button" @click="submitPayment">Submit</button>
       </div>
     </div>
   </div>
@@ -351,53 +330,157 @@
 export default {
   data() {
     return {
-      showFlightSquare: false,
+      showFlightSquare: true,
       showFlightSquareB: false,
       showFlightSquareC: false,
       showFlightSquareD: false,
-      showFlightSquareE: false,
-      bagNumber: 0,
-      bagWeight: 0,
+      departureDate: "",
+      returnDate: "",
+      airports: [
+        { name: "Zagreb", code: "ZAG" },
+        { name: "Paris", code: "CDG" },
+        { name: "London", code: "LHR" },
+        { name: "Manchester", code: "MAN" },
+        { name: "Madrid", code: "MAD" },
+        { name: "Barcelona", code: "BCN" },
+        { name: "Frankfurt", code: "FRA" },
+        { name: "Munchen", code: "MUC" },
+        { name: "Istanbul", code: "IST" },
+        { name: "Reykjavik", code: "KEF" },
+        { name: "Copenhagen", code: "CPH" },
+        { name: "Stockholm", code: "ARN" },
+        { name: "Oslo", code: "OSL" },
+        { name: "Zurich", code: "ZHR" },
+        { name: "Amsterdam", code: "AMS" },
+      ],
+      selectedOrigin: null,
+      selectedDestination: null,
+      ticketTypeSelected: false,
+      selectedTicketType: "",
+      creditCardNumber: "",
+      expirationDate: "",
+      cvv: "",
     };
   },
+  computed: {
+    showReturnDate() {
+      return this.selectedTicketType === "return";
+    },
+    filteredAirports() {
+      if (this.selectedOrigin) {
+        const filtered = this.airports.filter(
+          (airport) => airport.code !== this.selectedOrigin.code
+        );
+        console.log("Filtered Airports:", filtered); // Provjera filtriranih aerodroma
+        return filtered;
+      }
+      return this.airports;
+    },
+  },
+  mounted() {
+    this.$nextTick(() => {
+      const departureElement = document.getElementById("departure-datepicker");
+      const returnElement = document.getElementById("return-datepicker");
+
+      if (departureElement) {
+        const departureInput = departureElement.querySelector("input");
+
+        const departurePicker = new tempusDominus.TempusDominus(
+          departureInput,
+          {
+            display: {
+              components: {
+                calendar: true,
+                date: true,
+                month: true,
+                year: true,
+                decades: true,
+                clock: false,
+              },
+            },
+          }
+        );
+
+        document
+          .getElementById("button-departure")
+          .addEventListener("click", () => {
+            departurePicker.show();
+          });
+      }
+
+      if (returnElement) {
+        const returnInput = returnElement.querySelector("input");
+
+        const returnPicker = new tempusDominus.TempusDominus(returnInput, {
+          display: {
+            components: {
+              calendar: true,
+              date: true,
+              month: true,
+              year: true,
+              decades: true,
+              clock: false,
+            },
+          },
+        });
+
+        document
+          .getElementById("button-return")
+          .addEventListener("click", () => {
+            returnPicker.show();
+          });
+      }
+    });
+  },
+
   methods: {
     hideFlightSquare() {
       this.showFlightSquare = false;
     },
     showFlightBComponent() {
+      this.showFlightSquare = false;
       this.showFlightSquareB = true;
-    },
-    goBack() {
-      this.showFlightSquareB = false;
-      this.showFlightSquare = true;
     },
     showFlightCComponent() {
       this.showFlightSquareB = false;
       this.showFlightSquareC = true;
     },
-    goBackToFlightB() {
-      this.showFlightSquareC = false;
-      this.showFlightSquareB = true;
-    },
     showFlightDComponent() {
       this.showFlightSquareC = false;
       this.showFlightSquareD = true;
     },
-    goBackToFlightC() {
+    goBack() {
+      this.showFlightSquareB = false;
+      this.showFlightSquare = true;
+    },
+    goBackB() {
+      this.showFlightSquareC = false;
+      this.showFlightSquareB = true;
+    },
+    goBackC() {
       this.showFlightSquareD = false;
       this.showFlightSquareC = true;
     },
-    showFlightEComponent() {
-      this.showFlightSquareD = false;
-      this.showFlightSquareE = true;
+    submitPayment() {
+      // Logika za podnošenje plaćanja
     },
-    goBackToFlightD() {
-      this.showFlightSquareE = false;
-      this.showFlightSquareD = true;
+    selectOrigin(airport) {
+      this.selectedOrigin = airport;
+      this.selectedDestination = null; // Reset destination if origin changes
+    },
+    selectDestination(airport) {
+      this.selectedDestination = airport;
+    },
+    selectTicket(ticketType) {
+      this.selectedTicketType = ticketType;
+      this.ticketTypeSelected = true;
     },
   },
 };
 </script>
+
+
+
 
 
 <style scoped>
