@@ -94,17 +94,14 @@
             </div>
 
             <!-- Treci Button (Select Departure Date) -->
-            <div
-              v-show="ticketTypeSelected"
-              class="col-md-6 mb-3"
-              id="departure-datepicker"
-            >
+            <div v-show="ticketTypeSelected" class="col-md-6 mb-3">
               <div class="input-group">
                 <input
                   type="text"
                   class="form-control"
                   v-model="departureDate"
                   placeholder="Select Departure Date"
+                  id="departure-input"
                 />
                 <button
                   class="btn btn-outline-secondary"
@@ -149,17 +146,14 @@
               </div>
             </div>
             <!-- Peti Button (Select Return Date) -->
-            <div
-              v-show="showReturnDate"
-              class="col-md-6 mb-3"
-              id="return-datepicker"
-            >
+            <div v-show="showReturnDate" class="col-md-6 mb-3">
               <div class="input-group">
                 <input
                   type="text"
                   class="form-control"
                   v-model="returnDate"
                   placeholder="Select Return Date"
+                  id="return-input"
                 />
                 <button
                   class="btn btn-outline-secondary"
@@ -378,62 +372,48 @@ export default {
     },
   },
   mounted() {
-    this.$nextTick(() => {
-      const departureElement = document.getElementById("departure-datepicker");
-      const returnElement = document.getElementById("return-datepicker");
-
-      if (departureElement) {
-        const departureInput = departureElement.querySelector("input");
-
-        const departurePicker = new tempusDominus.TempusDominus(
-          departureInput,
-          {
-            display: {
-              components: {
-                calendar: true,
-                date: true,
-                month: true,
-                year: true,
-                decades: true,
-                clock: false,
-              },
-            },
-          }
-        );
-
-        document
-          .getElementById("button-departure")
-          .addEventListener("click", () => {
-            departurePicker.show();
-          });
-      }
-
-      if (returnElement) {
-        const returnInput = returnElement.querySelector("input");
-
-        const returnPicker = new tempusDominus.TempusDominus(returnInput, {
-          display: {
-            components: {
-              calendar: true,
-              date: true,
-              month: true,
-              year: true,
-              decades: true,
-              clock: false,
-            },
-          },
-        });
-
-        document
-          .getElementById("button-return")
-          .addEventListener("click", () => {
-            returnPicker.show();
-          });
-      }
-    });
+    this.initDatePickers();
   },
 
   methods: {
+    initDatePickers() {
+      // Inicijalizacija departure datepickera
+      const departureInput = document.getElementById("departure-input");
+      const departurePicker = new tempusDominus.TempusDominus(departureInput, {
+        display: {
+          components: {
+            calendar: true,
+            date: true,
+            month: true,
+            year: true,
+            clock: false,
+          },
+        },
+      });
+
+      document
+        .getElementById("button-departure")
+        .addEventListener("click", () => {
+          departurePicker.show();
+        });
+      // Inicijalizacija return datepickera
+      const returnInput = document.getElementById("return-input");
+      const returnPicker = new tempusDominus.TempusDominus(returnInput, {
+        display: {
+          components: {
+            calendar: true,
+            date: true,
+            month: true,
+            year: true,
+            clock: false,
+          },
+        },
+      });
+
+      document.getElementById("button-return").addEventListener("click", () => {
+        returnPicker.show();
+      });
+    },
     hideFlightSquare() {
       this.showFlightSquare = false;
     },
