@@ -211,18 +211,46 @@
       </div>
       <div class="text-container">
         <div class="purple-squares-container">
-          <div class="date-button">
-            <div class="half-text">3.3.2024.</div>
+          <!-- Prikaz odabranog datuma -->
+          <div class="date-button" v-if="departureDate">
+            <div class="half-text">{{ departureDate }}</div>
+          </div>
+          <!-- Drugi datum (ako je povratna karta odabrana) -->
+          <div
+            class="purple-squareB"
+            v-if="selectedOrigin && selectedDestination"
+          >
+            <div class="purple-squareB">
+              <div class="half-text">
+                {{
+                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
+                }}
+                ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
+                {{
+                  selectedDestination
+                    ? selectedDestination.name
+                    : "No Destination Selected"
+                }}
+                ({{ selectedDestination ? selectedDestination.code : "" }})
+              </div>
+              <div class="half-text">Flight Price: 105$</div>
+            </div>
+            <!-- Povratni datum (ako postoji) -->
+            <div class="date-button" v-if="returnDate">
+              <div class="half-text">{{ returnDate }}</div>
+            </div>
           </div>
           <div class="purple-squareB">
-            <div class="half-text">London Gatwick (LGW) - Pula (PUY)</div>
-            <div class="half-text">Flight Price: 105$</div>
-          </div>
-          <div class="date-button">
-            <div class="half-text">10.3.2024.</div>
-          </div>
-          <div class="purple-squareB">
-            <div class="half-text">Pula (PUY) - London Gatwick (LGW)</div>
+            <div class="half-text">
+              {{
+                selectedDestination
+                  ? selectedDestination.name
+                  : "No Destination Selected"
+              }}
+              ({{ selectedDestination ? selectedDestination.code : "" }}) -
+              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
+              ({{ selectedOrigin ? selectedOrigin.code : "" }})
+            </div>
             <div class="half-text">Flight Price: 105$</div>
           </div>
         </div>
@@ -391,6 +419,11 @@ export default {
         },
       });
 
+      // Ako postoji prethodno odabrani datum, postavi ga
+      if (this.selectedDepartureDate) {
+        departurePicker.dates.setValue(new Date(this.selectedDepartureDate));
+      }
+
       document
         .getElementById("button-departure")
         .addEventListener("click", () => {
@@ -432,6 +465,10 @@ export default {
     goBack() {
       this.showFlightSquareB = false;
       this.showFlightSquare = true;
+      // Ponovno inicijaliziraj datepickere nakon povratka
+      this.$nextTick(() => {
+        this.initDatePickers();
+      });
     },
     goBackB() {
       this.showFlightSquareC = false;
@@ -454,6 +491,13 @@ export default {
     selectTicket(ticketType) {
       this.selectedTicketType = ticketType;
       this.ticketTypeSelected = true;
+    },
+    // Funkcija za postavljanje datuma kada se odabere datum
+    setDepartureDate(date) {
+      this.selectedDepartureDate = date;
+    },
+    setReturnDate(date) {
+      this.selectedReturnDate = date;
     },
   },
 };
