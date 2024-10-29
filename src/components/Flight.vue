@@ -348,11 +348,25 @@
     </div>
   </div>
 </template>
+
 <script>
+import { nextTick } from "vue";
+import tempusDominus from "@eonasdan/tempus-dominus"; // Import the datepicker library
+
 export default {
+  props: {
+    showFlightSquare: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
-      showFlightSquare: true,
+      departureInputId: `departure-input-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`,
+      returnInputId: `return-input-${Math.random().toString(36).substr(2, 9)}`,
+      showFlightSquareLocal: this.showFlightSquare,
       showFlightSquareB: false,
       showFlightSquareC: false,
       showFlightSquareD: false,
@@ -366,13 +380,13 @@ export default {
         { name: "Madrid", code: "MAD" },
         { name: "Barcelona", code: "BCN" },
         { name: "Frankfurt", code: "FRA" },
-        { name: "Munchen", code: "MUC" },
+        { name: "Munich", code: "MUC" },
         { name: "Istanbul", code: "IST" },
         { name: "Reykjavik", code: "KEF" },
         { name: "Copenhagen", code: "CPH" },
         { name: "Stockholm", code: "ARN" },
         { name: "Oslo", code: "OSL" },
-        { name: "Zurich", code: "ZHR" },
+        { name: "Zurich", code: "ZRH" },
         { name: "Amsterdam", code: "AMS" },
       ],
       selectedOrigin: null,
@@ -389,101 +403,92 @@ export default {
       return this.selectedTicketType === "return";
     },
     filteredAirports() {
-      if (this.selectedOrigin) {
-        const filtered = this.airports.filter(
-          (airport) => airport.code !== this.selectedOrigin.code
-        );
-        console.log("Filtered Airports:", filtered); // Provjera filtriranih aerodroma
-        return filtered;
-      }
-      return this.airports;
+      return this.selectedOrigin
+        ? this.airports.filter(
+            (airport) => airport.code !== this.selectedOrigin.code
+          )
+        : this.airports;
+    },
+  },
+  watch: {
+    showFlightSquare(newVal) {
+      this.showFlightSquareLocal = newVal;
     },
   },
   mounted() {
     this.initDatePickers();
   },
-
   methods: {
     initDatePickers() {
-      // Inicijalizacija departure datepickera
-      const departureInput = document.getElementById("departure-input");
-      const departurePicker = new tempusDominus.TempusDominus(departureInput, {
-        display: {
-          components: {
-            calendar: true,
-            date: true,
-            month: true,
-            year: true,
-            clock: false,
-          },
-        },
-      });
-
-      // Ako postoji prethodno odabrani datum, postavi ga
-      if (this.selectedDepartureDate) {
-        departurePicker.dates.setValue(new Date(this.selectedDepartureDate));
-      }
-
-      document
-        .getElementById("button-departure")
-        .addEventListener("click", () => {
-          departurePicker.show();
-        });
-      // Inicijalizacija return datepickera
-      const returnInput = document.getElementById("return-input");
-      const returnPicker = new tempusDominus.TempusDominus(returnInput, {
-        display: {
-          components: {
-            calendar: true,
-            date: true,
-            month: true,
-            year: true,
-            clock: false,
-          },
-        },
-      });
-
-      document.getElementById("button-return").addEventListener("click", () => {
-        returnPicker.show();
+      nextTick(() => {
+        this.initializePicker(
+          this.departureInputId,
+          this.departureDate,
+          "button-departure"
+        );
+        this.initializePicker(
+          this.returnInputId,
+          this.returnDate,
+          "button-return"
+        );
       });
     },
-    hideFlightSquare() {
-      this.showFlightSquare = false;
+    initializePicker(inputId, selectedDate, buttonId) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        const picker = new tempusDominus.TempusDominus(input, {
+          display: {
+            components: {
+              calendar: true,
+              date: true,
+              month: true,
+              year: true,
+              clock: false,
+            },
+          },
+        });
+        if (selectedDate) {
+          picker.dates.setValue(new Date(selectedDate));
+        }
+        document
+          .getElementById(buttonId)
+          ?.addEventListener("click", () => picker.show());
+      }
+    },
+    toggleFlightSquare(show) {
+      this.showFlightSquareLocal = show;
     },
     showFlightBComponent() {
-      this.showFlightSquare = false;
-      this.showFlightSquareB = true;
+      this.updateComponentVisibility(false, true, false, false);
     },
     showFlightCComponent() {
-      this.showFlightSquareB = false;
-      this.showFlightSquareC = true;
+      this.updateComponentVisibility(false, false, true, false);
     },
     showFlightDComponent() {
-      this.showFlightSquareC = false;
-      this.showFlightSquareD = true;
+      this.updateComponentVisibility(false, false, false, true);
     },
     goBack() {
-      this.showFlightSquareB = false;
-      this.showFlightSquare = true;
-      // Ponovno inicijaliziraj datepickere nakon povratka
-      this.$nextTick(() => {
-        this.initDatePickers();
-      });
+      this.updateComponentVisibility(true, false, false, false);
+      this.initDatePickers();
     },
     goBackB() {
-      this.showFlightSquareC = false;
-      this.showFlightSquareB = true;
+      this.updateComponentVisibility(false, true, false, false);
     },
     goBackC() {
-      this.showFlightSquareD = false;
-      this.showFlightSquareC = true;
+      this.updateComponentVisibility(false, false, true, false);
+    },
+    updateComponentVisibility(local, b, c, d) {
+      this.showFlightSquareLocal = local;
+      this.showFlightSquareB = b;
+      this.showFlightSquareC = c;
+      this.showFlightSquareD = d;
     },
     submitPayment() {
-      // Logika za podnošenje plaćanja
+      // Payment submission logic here
     },
     selectOrigin(airport) {
       this.selectedOrigin = airport;
-      this.selectedDestination = null; // Reset destination if origin changes
+      this.selectedDestination = null;
     },
     selectDestination(airport) {
       this.selectedDestination = airport;
@@ -492,16 +497,19 @@ export default {
       this.selectedTicketType = ticketType;
       this.ticketTypeSelected = true;
     },
-    // Funkcija za postavljanje datuma kada se odabere datum
     setDepartureDate(date) {
-      this.selectedDepartureDate = date;
+      this.departureDate = date;
     },
     setReturnDate(date) {
-      this.selectedReturnDate = date;
+      this.returnDate = date;
     },
   },
 };
 </script>
+
+
+
+
 
 
 

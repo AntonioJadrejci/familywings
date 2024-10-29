@@ -5,11 +5,16 @@
         class="square"
         @mouseover="scaleUp"
         @mouseout="scaleDown"
-        @click="showFlightSquare"
+        @click="toggleFlightSquare"
       >
         <img src="@/assets/plane.webp" alt="Image 1" class="square-image" />
         <button class="square-button">Flight</button>
       </div>
+      <Flight
+        :showFlightSquare="showFlightSquareFlag"
+        ref="flightComponent"
+      ></Flight>
+
       <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
         <img src="@/assets/RentaCar.jpg" alt="Image 1" class="square-image" />
         <button class="square-button">Rent a Car</button>
@@ -19,7 +24,6 @@
         <button class="square-button">Shuttle Bus</button>
       </div>
     </div>
-    <Flight ref="flightComponent"></Flight>
   </div>
 </template>
 
@@ -29,6 +33,11 @@ import Flight from "@/components/Flight.vue";
 export default {
   name: "HomeView",
   components: { Flight },
+  data() {
+    return {
+      showFlightSquareFlag: false,
+    };
+  },
   methods: {
     scaleUp(event) {
       event.currentTarget.classList.add("hovered");
@@ -36,15 +45,13 @@ export default {
     scaleDown(event) {
       event.currentTarget.classList.remove("hovered");
     },
-    showFlightSquare() {
-      // Set showFlightSquare to true to display the Flight component
-      if (this.$refs.flightComponent) {
-        this.$refs.flightComponent.showFlightSquare = true;
-      }
+    toggleFlightSquare() {
+      this.showFlightSquareFlag = !this.showFlightSquareFlag;
     },
   },
 };
 </script>
+
 <style scoped>
 .home-background {
   background-image: url("~@/assets/A321.jpg");
