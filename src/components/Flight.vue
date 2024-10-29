@@ -351,7 +351,7 @@
 
 <script>
 import { nextTick } from "vue";
-import tempusDominus from "@eonasdan/tempus-dominus"; // Import the datepicker library
+import { TempusDominus } from "@eonasdan/tempus-dominus"; // Import the named export
 
 export default {
   props: {
@@ -419,6 +419,10 @@ export default {
     this.initDatePickers();
   },
   methods: {
+    hideFlightSquare() {
+      this.showFlightSquareLocal = false; // Skriva Flight Square
+    },
+
     initDatePickers() {
       nextTick(() => {
         this.initializePicker(
@@ -436,7 +440,7 @@ export default {
     initializePicker(inputId, selectedDate, buttonId) {
       const input = document.getElementById(inputId);
       if (input) {
-        const picker = new tempusDominus.TempusDominus(input, {
+        const picker = new TempusDominus(input, {
           display: {
             components: {
               calendar: true,
@@ -506,11 +510,6 @@ export default {
   },
 };
 </script>
-
-
-
-
-
 
 
 
