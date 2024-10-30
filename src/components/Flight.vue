@@ -420,7 +420,7 @@ export default {
   },
   methods: {
     hideFlightSquare() {
-      this.showFlightSquareLocal = false; // Skriva Flight Square
+      this.$emit("close");
     },
 
     initDatePickers() {

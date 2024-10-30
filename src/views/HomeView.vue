@@ -13,6 +13,7 @@
       <Flight
         :showFlightSquare="showFlightSquareFlag"
         ref="flightComponent"
+        @close="toggleFlightSquare"
       ></Flight>
 
       <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
