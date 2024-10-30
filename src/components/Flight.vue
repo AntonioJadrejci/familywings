@@ -101,12 +101,13 @@
                   class="form-control"
                   v-model="departureDate"
                   placeholder="Select Departure Date"
-                  id="departure-input"
+                  :id="departureInputId"
+                  ref="departureInput"
                 />
                 <button
                   class="btn btn-outline-secondary"
                   type="button"
-                  id="button-departure"
+                  ref="departureButton"
                 >
                   <i class="fa fa-calendar"></i>
                 </button>
@@ -153,12 +154,13 @@
                   class="form-control"
                   v-model="returnDate"
                   placeholder="Select Return Date"
-                  id="return-input"
+                  :id="returnInputId"
+                  ref="returnInput"
                 />
                 <button
                   class="btn btn-outline-secondary"
                   type="button"
-                  id="button-return"
+                  ref="returnButton"
                 >
                   <i class="fa fa-calendar"></i>
                 </button>
@@ -414,6 +416,11 @@ export default {
     showFlightSquare(newVal) {
       this.showFlightSquareLocal = newVal;
     },
+    showFlightSquareLocal(newVal) {
+      if (newVal) {
+        this.initDatePickers();
+      }
+    },
   },
   mounted() {
     this.initDatePickers();
@@ -510,6 +517,8 @@ export default {
   },
 };
 </script>
+
+
 
 
 
