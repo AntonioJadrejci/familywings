@@ -180,13 +180,45 @@
                 Passengers
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">1</a></li>
-                <li><a class="dropdown-item" href="#">2</a></li>
-                <li><a class="dropdown-item" href="#">3</a></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click="selectNumberOfPassengers(1)"
+                    >1</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click="selectNumberOfPassengers(2)"
+                    >2</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click="selectNumberOfPassengers(3)"
+                    >3</a
+                  >
+                </li>
               </ul>
             </div>
           </div>
         </div>
+
+        <!-- Display the final calculated price and passenger count -->
+        <div class="purple-squareB">
+          <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+        </div>
+        <div class="purple-squareB">
+          <div class="half-text">
+            Number of Passengers: {{ numberOfPassengers }}
+          </div>
+        </div>
+
         <div class="button-container">
           <button class="back-button" @click="hideFlightSquare">Close</button>
           <button class="next-button" @click="showFlightBComponent">
@@ -353,7 +385,7 @@
 
 <script>
 import { nextTick } from "vue";
-import { TempusDominus } from "@eonasdan/tempus-dominus"; // Import the named export
+import { TempusDominus } from "@eonasdan/tempus-dominus";
 
 export default {
   props: {
@@ -394,7 +426,9 @@ export default {
       selectedOrigin: null,
       selectedDestination: null,
       ticketTypeSelected: false,
-      selectedTicketType: "",
+      selectedTicketType: "one-way",
+      numberOfPassengers: 1,
+      basePriceOneWay: 30,
       creditCardNumber: "",
       expirationDate: "",
       cvv: "",
@@ -410,6 +444,13 @@ export default {
             (airport) => airport.code !== this.selectedOrigin.code
           )
         : this.airports;
+    },
+    finalPrice() {
+      let basePrice =
+        this.selectedTicketType === "return"
+          ? this.basePriceOneWay * 2
+          : this.basePriceOneWay;
+      return basePrice * this.numberOfPassengers;
     },
   },
   watch: {
@@ -429,23 +470,14 @@ export default {
     hideFlightSquare() {
       this.$emit("close");
     },
-
     initDatePickers() {
       nextTick(() => {
-        this.initializePicker(
-          this.departureInputId,
-          this.departureDate,
-          "button-departure"
-        );
-        this.initializePicker(
-          this.returnInputId,
-          this.returnDate,
-          "button-return"
-        );
+        this.initializeDeparturePicker();
+        this.initializeReturnPicker();
       });
     },
-    initializePicker(inputId, selectedDate, buttonId) {
-      const input = document.getElementById(inputId);
+    initializeDeparturePicker() {
+      const input = document.getElementById(this.departureInputId);
       if (input) {
         const picker = new TempusDominus(input, {
           display: {
@@ -457,14 +489,90 @@ export default {
               clock: false,
             },
           },
+          localization: {
+            format: "dd/MM/yyyy",
+          },
+          restrictions: {
+            minDate: this.getTomorrow(),
+          },
         });
-        if (selectedDate) {
-          picker.dates.setValue(new Date(selectedDate));
-        }
-        document
-          .getElementById(buttonId)
-          ?.addEventListener("click", () => picker.show());
+
+        picker.dates.setValue(
+          this.departureDate ? new Date(this.departureDate) : null
+        );
+
+        picker.subscribe("change", (e) => {
+          const dateWithRandomTime = this.addRandomTime(e.date);
+          const formattedDate = dateWithRandomTime.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          this.departureDate = formattedDate;
+          input.value = formattedDate;
+        });
+
+        this.$refs.departureButton.addEventListener("click", () =>
+          picker.show()
+        );
       }
+    },
+    initializeReturnPicker() {
+      const input = document.getElementById(this.returnInputId);
+      if (input) {
+        const picker = new TempusDominus(input, {
+          display: {
+            components: {
+              calendar: true,
+              date: true,
+              month: true,
+              year: true,
+              clock: false,
+            },
+          },
+          localization: {
+            format: "dd/MM/yyyy",
+          },
+          restrictions: {
+            minDate: this.departureDate
+              ? new Date(this.departureDate)
+              : this.getTomorrow(),
+          },
+        });
+
+        picker.dates.setValue(
+          this.returnDate ? new Date(this.returnDate) : null
+        );
+
+        picker.subscribe("change", (e) => {
+          const dateWithRandomTime = this.addRandomTime(e.date);
+          const formattedDate = dateWithRandomTime.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          this.returnDate = formattedDate;
+          input.value = formattedDate;
+        });
+
+        this.$refs.returnButton.addEventListener("click", () => picker.show());
+      }
+    },
+    getTomorrow() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return tomorrow;
+    },
+    addRandomTime(date) {
+      const hours = Math.floor(Math.random() * 24);
+      const minutes = Math.floor(Math.random() / 2) * 30;
+      date.setHours(hours);
+      date.setMinutes(minutes);
+      return date;
     },
     toggleFlightSquare(show) {
       this.showFlightSquareLocal = show;
@@ -508,6 +616,9 @@ export default {
       this.selectedTicketType = ticketType;
       this.ticketTypeSelected = true;
     },
+    selectNumberOfPassengers(num) {
+      this.numberOfPassengers = num;
+    },
     setDepartureDate(date) {
       this.departureDate = date;
     },
@@ -517,6 +628,12 @@ export default {
   },
 };
 </script>
+
+
+
+
+
+
 
 
 
