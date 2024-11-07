@@ -315,8 +315,13 @@
         />
       </div>
       <div class="luggage-container">
-        <div class="luggage-type">
-          <img src="@/assets/Bag.png" alt="Carry-On Bag" />
+        <div
+          class="luggage-type"
+          :class="{ hovered: hoveredLuggageType === 'carry-on' }"
+          @mouseover="hoveredLuggageType = 'carry-on'"
+          @mouseout="hoveredLuggageType = ''"
+        >
+          <img src="@/assets/Baggage.png" alt="Carry-On Bag" />
           <div class="luggage-details">
             <h3>Carry-On Bag x 1</h3>
             <p>MAX 10 KG</p>
@@ -324,7 +329,12 @@
             <p>FREE</p>
           </div>
         </div>
-        <div class="luggage-type">
+        <div
+          class="luggage-type"
+          :class="{ hovered: hoveredLuggageType === 'trolley' }"
+          @mouseover="hoveredLuggageType = 'trolley'"
+          @mouseout="hoveredLuggageType = ''"
+        >
           <img src="@/assets/Baggage.png" alt="Trolley Bag" />
           <div class="luggage-details">
             <h3>Trolley Bag x 1</h3>
@@ -333,7 +343,12 @@
             <p>FREE</p>
           </div>
         </div>
-        <div class="luggage-type">
+        <div
+          class="luggage-type"
+          :class="{ hovered: hoveredLuggageType === 'checked1' }"
+          @mouseover="hoveredLuggageType = 'checked1'"
+          @mouseout="hoveredLuggageType = ''"
+        >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
             <h3>Checked Bag x 1</h3>
@@ -342,7 +357,12 @@
             <p>25 $</p>
           </div>
         </div>
-        <div class="luggage-type">
+        <div
+          class="luggage-type"
+          :class="{ hovered: hoveredLuggageType === 'checked2' }"
+          @mouseover="hoveredLuggageType = 'checked2'"
+          @mouseout="hoveredLuggageType = ''"
+        >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
             <h3>Checked Bag x 2</h3>
@@ -434,6 +454,7 @@ export default {
       creditCardNumber: "",
       expirationDate: "",
       cvv: "",
+      hoveredLuggageType: "", // Dodajemo novu promenljivu
     };
   },
   computed: {
@@ -822,13 +843,22 @@ export default {
 }
 
 .luggage-type {
-  border: 2px solid #9400d3; /* Purple border color */
+  border: 2px solid #9400d3;
   border-radius: 10px;
   padding: 10px;
-  width: 30%; /* Adjust as per your layout */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add some shadow for depth */
+  width: 30%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 10px;
   flex: 1;
+}
+
+.luggage-type.hovered {
+  background-color: #00d3e0; /* Promenjena boja kada je miš iznad */
+  color: white;
+}
+.luggage-type.hovered h3,
+.luggage-type.hovered p {
+  color: white; /* Boja teksta za bolju vidljivost */
 }
 
 .luggage-type img {
