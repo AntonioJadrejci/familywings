@@ -314,12 +314,23 @@
           class="right-image"
         />
       </div>
+
+      <!-- Prikaz trenutne cijene leta i reset dugme -->
+      <div class="special-purple-square">
+        <span>Flight Price: {{ totalPrice }}€</span>
+        <button class="button secondary" @click="resetLuggage">
+          Reset Luggage
+        </button>
+      </div>
+
+      <!-- Prikaz opcija prtljage -->
       <div class="luggage-container">
         <div
           class="luggage-type"
           :class="{ hovered: hoveredLuggageType === 'carry-on' }"
           @mouseover="hoveredLuggageType = 'carry-on'"
           @mouseout="hoveredLuggageType = ''"
+          @click="selectLuggage(luggageTypes[0])"
         >
           <img src="@/assets/Baggage.png" alt="Carry-On Bag" />
           <div class="luggage-details">
@@ -329,11 +340,13 @@
             <p>FREE</p>
           </div>
         </div>
+
         <div
           class="luggage-type"
           :class="{ hovered: hoveredLuggageType === 'trolley' }"
           @mouseover="hoveredLuggageType = 'trolley'"
           @mouseout="hoveredLuggageType = ''"
+          @click="selectLuggage(luggageTypes[1])"
         >
           <img src="@/assets/Baggage.png" alt="Trolley Bag" />
           <div class="luggage-details">
@@ -343,35 +356,41 @@
             <p>FREE</p>
           </div>
         </div>
+
         <div
           class="luggage-type"
           :class="{ hovered: hoveredLuggageType === 'checked1' }"
           @mouseover="hoveredLuggageType = 'checked1'"
           @mouseout="hoveredLuggageType = ''"
+          @click="selectLuggage(luggageTypes[2])"
         >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
-            <h3>Checked Bag x 1</h3>
+            <h3>Checked Bag x 2</h3>
             <p>MAX 20 KG</p>
             <p>99 x 119 x 171 cm</p>
-            <p>25 $</p>
+            <p>25 €</p>
           </div>
         </div>
+
         <div
           class="luggage-type"
           :class="{ hovered: hoveredLuggageType === 'checked2' }"
           @mouseover="hoveredLuggageType = 'checked2'"
           @mouseout="hoveredLuggageType = ''"
+          @click="selectLuggage(luggageTypes[3])"
         >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
             <h3>Checked Bag x 2</h3>
             <p>MAX 32 KG</p>
             <p>81 x 119 x 171 cm</p>
-            <p>35 $</p>
+            <p>35 €</p>
           </div>
         </div>
       </div>
+
+      <!-- Dugmad za povratak i nastavak -->
       <div class="button-container">
         <button class="back-button" @click="goBackB">Back</button>
         <button class="next-button" @click="showFlightDComponent">Next</button>
@@ -455,6 +474,36 @@ export default {
       expirationDate: "",
       cvv: "",
       hoveredLuggageType: "", // Dodajemo novu promenljivu
+      luggageTypes: [
+        {
+          name: "Carry-On Bag",
+          price: 0,
+          maxCount: 1,
+          selectedCount: 0,
+          description: "MAX 10 KG, 40 x 30 x 20 cm",
+        },
+        {
+          name: "Trolley Bag",
+          price: 0,
+          maxCount: 1,
+          selectedCount: 0,
+          description: "MAX 10 KG, 55 x 40 x 20 cm",
+        },
+        {
+          name: "Checked Bag x 1",
+          price: 25,
+          maxCount: 2,
+          selectedCount: 0,
+          description: "MAX 20 KG, 99 x 119 x 171 cm",
+        },
+        {
+          name: "Checked Bag x 2",
+          price: 35,
+          maxCount: 2,
+          selectedCount: 0,
+          description: "MAX 32 KG, 81 x 119 x 171 cm",
+        },
+      ],
     };
   },
   computed: {
@@ -467,6 +516,12 @@ export default {
             (airport) => airport.code !== this.selectedOrigin.code
           )
         : this.airports;
+    },
+    totalPrice() {
+      const luggagePrice = this.luggageTypes.reduce((acc, luggage) => {
+        return acc + luggage.price * luggage.selectedCount;
+      }, 0);
+      return this.finalPrice + luggagePrice;
     },
     finalPrice() {
       let basePrice =
@@ -497,6 +552,16 @@ export default {
       nextTick(() => {
         this.initializeDeparturePicker();
         this.initializeReturnPicker();
+      });
+    },
+    selectLuggage(luggage) {
+      if (luggage.selectedCount < luggage.maxCount) {
+        luggage.selectedCount++;
+      }
+    },
+    resetLuggage() {
+      this.luggageTypes.forEach((luggage) => {
+        luggage.selectedCount = 0;
       });
     },
     initializeDeparturePicker() {
