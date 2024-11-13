@@ -1,4 +1,4 @@
-<template>
+“<template>
   <div>
     <!-- Flight Square -->
     <div class="flight-square" v-if="showFlightSquare">
@@ -393,7 +393,220 @@
       <!-- Dugmad za povratak i nastavak -->
       <div class="button-container">
         <button class="back-button" @click="goBackB">Back</button>
-        <button class="next-button" @click="showFlightDComponent">Next</button>
+        <button class="next-button" @click="showFlightC2Component">Next</button>
+      </div>
+    </div>
+
+    <!-- FlightC2 Square -->
+    <div class="flight-square" v-if="showFlightSquareC2">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="purple-squares-container">
+          <!-- Display Departure Date and Flight Details -->
+          <div class="date-button" v-if="departureDate">
+            <div class="half-text">{{ departureDate }}</div>
+          </div>
+
+          <div class="purple-squareB">
+            <div class="half-text">
+              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
+              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
+              {{
+                selectedDestination
+                  ? selectedDestination.name
+                  : "No Destination Selected"
+              }}
+              ({{ selectedDestination ? selectedDestination.code : "" }})
+            </div>
+          </div>
+
+          <!-- Additional Return Details for Return Tickets -->
+          <template v-if="selectedTicketType === 'return'">
+            <div class="date-button" v-if="returnDate">
+              <div class="half-text">{{ returnDate }}</div>
+            </div>
+            <div class="purple-squareB">
+              <div class="half-text">
+                {{
+                  selectedDestination
+                    ? selectedDestination.name
+                    : "No Destination Selected"
+                }}
+                ({{ selectedDestination ? selectedDestination.code : "" }}) -
+                {{
+                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
+                }}
+                ({{ selectedOrigin ? selectedOrigin.code : "" }})
+              </div>
+            </div>
+          </template>
+
+          <!-- Single Flight Price Purple Square -->
+          <div class="purple-squareB">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="back-button" @click="goBackC">Back</button>
+          <button class="next-button" @click="showFlightC3Component">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FlightC3 Square -->
+    <div class="flight-square" v-if="showFlightSquareC3">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="purple-squares-container">
+          <!-- Display Departure Date and Flight Details -->
+          <div class="date-button" v-if="departureDate">
+            <div class="half-text">{{ departureDate }}</div>
+          </div>
+
+          <div class="purple-squareB">
+            <div class="half-text">
+              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
+              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
+              {{
+                selectedDestination
+                  ? selectedDestination.name
+                  : "No Destination Selected"
+              }}
+              ({{ selectedDestination ? selectedDestination.code : "" }})
+            </div>
+          </div>
+
+          <!-- Additional Return Details for Return Tickets -->
+          <template v-if="selectedTicketType === 'return'">
+            <div class="date-button" v-if="returnDate">
+              <div class="half-text">{{ returnDate }}</div>
+            </div>
+            <div class="purple-squareB">
+              <div class="half-text">
+                {{
+                  selectedDestination
+                    ? selectedDestination.name
+                    : "No Destination Selected"
+                }}
+                ({{ selectedDestination ? selectedDestination.code : "" }}) -
+                {{
+                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
+                }}
+                ({{ selectedOrigin ? selectedOrigin.code : "" }})
+              </div>
+            </div>
+          </template>
+
+          <!-- Single Flight Price Purple Square -->
+          <div class="purple-squareB">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="back-button" @click="goBackC2">Back</button>
+          <button class="next-button" @click="showFlightC4Component">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FlightC4 Square -->
+    <div class="flight-square" v-if="showFlightSquareC4">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="purple-squares-container">
+          <!-- Display Departure Date and Flight Details -->
+          <div class="date-button" v-if="departureDate">
+            <div class="half-text">{{ departureDate }}</div>
+          </div>
+
+          <div class="purple-squareB">
+            <div class="half-text">
+              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
+              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
+              {{
+                selectedDestination
+                  ? selectedDestination.name
+                  : "No Destination Selected"
+              }}
+              ({{ selectedDestination ? selectedDestination.code : "" }})
+            </div>
+          </div>
+
+          <!-- Additional Return Details for Return Tickets -->
+          <template v-if="selectedTicketType === 'return'">
+            <div class="date-button" v-if="returnDate">
+              <div class="half-text">{{ returnDate }}</div>
+            </div>
+            <div class="purple-squareB">
+              <div class="half-text">
+                {{
+                  selectedDestination
+                    ? selectedDestination.name
+                    : "No Destination Selected"
+                }}
+                ({{ selectedDestination ? selectedDestination.code : "" }}) -
+                {{
+                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
+                }}
+                ({{ selectedOrigin ? selectedOrigin.code : "" }})
+              </div>
+            </div>
+          </template>
+
+          <!-- Single Flight Price Purple Square -->
+          <div class="purple-squareB">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button class="back-button" @click="goBackC3">Back</button>
+          <button class="next-button" @click="showFlightDComponent">
+            Next
+          </button>
+        </div>
       </div>
     </div>
 
@@ -444,6 +657,9 @@ export default {
       showFlightSquareLocal: this.showFlightSquare,
       showFlightSquareB: false,
       showFlightSquareC: false,
+      showFlightSquareC2: false,
+      showFlightSquareC3: false,
+      showFlightSquareC4: false,
       showFlightSquareD: false,
       departureDate: "",
       returnDate: "",
@@ -666,28 +882,126 @@ export default {
       this.showFlightSquareLocal = show;
     },
     showFlightBComponent() {
-      this.updateComponentVisibility(false, true, false, false);
+      this.updateComponentVisibility(
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      );
     },
     showFlightCComponent() {
-      this.updateComponentVisibility(false, false, true, false);
+      this.updateComponentVisibility(
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      );
+    },
+    showFlightC2Component() {
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      );
+    },
+    showFlightC3Component() {
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      );
+    },
+    showFlightC4Component() {
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      );
     },
     showFlightDComponent() {
-      this.updateComponentVisibility(false, false, false, true);
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      );
     },
     goBack() {
       this.updateComponentVisibility(true, false, false, false);
       this.initDatePickers();
     },
     goBackB() {
-      this.updateComponentVisibility(false, true, false, false);
+      this.updateComponentVisibility(
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      );
     },
     goBackC() {
-      this.updateComponentVisibility(false, false, true, false);
+      this.updateComponentVisibility(
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      );
     },
-    updateComponentVisibility(local, b, c, d) {
+    goBackC2() {
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      );
+    },
+    goBackC3() {
+      this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      );
+    },
+    updateComponentVisibility(local, b, c, c2, c3, c4, d) {
       this.showFlightSquareLocal = local;
       this.showFlightSquareB = b;
       this.showFlightSquareC = c;
+      this.showFlightSquareC2 = c2;
+      this.showFlightSquareC3 = c3;
+      this.showFlightSquareC4 = c4;
       this.showFlightSquareD = d;
     },
     submitPayment() {
@@ -716,7 +1030,6 @@ export default {
   },
 };
 </script>
-
 
 
 
