@@ -954,8 +954,8 @@ export default {
     goBackB() {
       this.updateComponentVisibility(
         false,
-        false,
         true,
+        false,
         false,
         false,
         false,
