@@ -1,4 +1,4 @@
-“<template>
+<template>
   <div>
     <!-- Flight Square -->
     <div class="flight-square" v-if="showFlightSquare">
@@ -414,55 +414,39 @@
       </div>
       <div class="text-container">
         <div class="purple-squares-container">
-          <!-- Display Departure Date and Flight Details -->
-          <div class="date-button" v-if="departureDate">
-            <div class="half-text">{{ departureDate }}</div>
-          </div>
-
-          <div class="purple-squareB">
-            <div class="half-text">
-              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
-              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
-              {{
-                selectedDestination
-                  ? selectedDestination.name
-                  : "No Destination Selected"
-              }}
-              ({{ selectedDestination ? selectedDestination.code : "" }})
-            </div>
-          </div>
-
           <!-- Additional Return Details for Return Tickets -->
-          <template v-if="selectedTicketType === 'return'">
-            <div class="date-button" v-if="returnDate">
-              <div class="half-text">{{ returnDate }}</div>
-            </div>
-            <div class="purple-squareB">
-              <div class="half-text">
-                {{
-                  selectedDestination
-                    ? selectedDestination.name
-                    : "No Destination Selected"
-                }}
-                ({{ selectedDestination ? selectedDestination.code : "" }}) -
-                {{
-                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
-                }}
-                ({{ selectedOrigin ? selectedOrigin.code : "" }})
-              </div>
-            </div>
-          </template>
 
           <!-- Single Flight Price Purple Square -->
           <div class="purple-squareB">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+            <div class="half-text">Flight Price: {{ totalPrice }}€</div>
+          </div>
+        </div>
+        <!-- New section for additional services -->
+        <div class="services-header">
+          <h2>Other services?</h2>
+        </div>
+        <div class="services-container">
+          <!-- Rent a Car -->
+          <div class="service-option" @click="selectService('rent-a-car')">
+            <img src="@/assets/RentaCar.jpg" alt="Rent a Car" />
+            <button class="service-button" @click="showFlightC3Component">
+              Rent a Car
+            </button>
+          </div>
+
+          <!-- Shuttle Bus -->
+          <div class="service-option" @click="selectService('shuttle-bus')">
+            <img src="@/assets/ShuttleBus.jpg" alt="Shuttle Bus" />
+            <button class="service-button" @click="showFlightC4Component">
+              Shuttle Bus
+            </button>
           </div>
         </div>
 
         <div class="button-container">
           <button class="back-button" @click="goBackC">Back</button>
           <button class="next-button" @click="showFlightC3Component">
-            Next
+            Skip this step
           </button>
         </div>
       </div>
@@ -1027,6 +1011,10 @@ export default {
     setReturnDate(date) {
       this.returnDate = date;
     },
+    selectService(service) {
+      console.log(`Selected service: ${service}`);
+      // Ovdje možete dodati logiku za odabranu uslugu (npr. dodavanje cijene)
+    },
   },
 };
 </script>
@@ -1396,5 +1384,72 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
+.services-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.services-header h2 {
+  font-size: 24px;
+  color: #000000;
+}
+
+.services-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.service-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.service-option:hover {
+  transform: scale(1.05);
+}
+
+.service-option img {
+  width: 250px;
+  height: 150px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.service-button {
+  background-color: #9400d3;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.price-display {
+  font-size: 18px;
+  color: #00d3e0;
+}
+
+.skip-button {
+  background-color: #00d3e0;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 /* FlightD CSS */
 </style>
