@@ -445,7 +445,7 @@
 
         <div class="button-container">
           <button class="back-button" @click="goBackC">Back</button>
-          <button class="next-button" @click="showFlightC3Component">
+          <button class="next-button" @click="showFlightDComponent">
             Skip this step
           </button>
         </div>
@@ -467,59 +467,92 @@
           class="right-image"
         />
       </div>
-      <div class="text-container">
-        <div class="purple-squares-container">
-          <!-- Display Departure Date and Flight Details -->
-          <div class="date-button" v-if="departureDate">
-            <div class="half-text">{{ departureDate }}</div>
-          </div>
 
-          <div class="purple-squareB">
-            <div class="half-text">
-              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
-              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
-              {{
-                selectedDestination
-                  ? selectedDestination.name
-                  : "No Destination Selected"
-              }}
-              ({{ selectedDestination ? selectedDestination.code : "" }})
-            </div>
-          </div>
+      <h2>Rent a Car</h2>
 
-          <!-- Additional Return Details for Return Tickets -->
-          <template v-if="selectedTicketType === 'return'">
-            <div class="date-button" v-if="returnDate">
-              <div class="half-text">{{ returnDate }}</div>
-            </div>
-            <div class="purple-squareB">
-              <div class="half-text">
-                {{
-                  selectedDestination
-                    ? selectedDestination.name
-                    : "No Destination Selected"
-                }}
-                ({{ selectedDestination ? selectedDestination.code : "" }}) -
-                {{
-                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
-                }}
-                ({{ selectedOrigin ? selectedOrigin.code : "" }})
-              </div>
-            </div>
-          </template>
+      <!-- Select Airport -->
+      <div class="mb-3">
+        <label for="selectAirport" class="form-label">Select Airport</label>
+        <select
+          id="selectAirport"
+          class="form-select"
+          v-model="selectedAirport"
+        >
+          <option
+            v-for="airport in airports"
+            :key="airport.code"
+            :value="airport.code"
+          >
+            {{ airport.name }} ({{ airport.code }})
+          </option>
+        </select>
+      </div>
 
-          <!-- Single Flight Price Purple Square -->
-          <div class="purple-squareB">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+      <!-- Pickup and Return Dates -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="pickupDate" class="form-label">Pickup Date</label>
+          <input
+            id="pickupDate"
+            type="date"
+            class="form-control"
+            v-model="pickupDate"
+            min="2024-11-22"
+            placeholder="dd/mm/yyyy"
+          />
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="returnDate" class="form-label">Return Date</label>
+          <input
+            id="returnDate"
+            type="date"
+            class="form-control"
+            v-model="returnDate"
+            :min="pickupDate"
+            placeholder="dd/mm/yyyy"
+          />
+        </div>
+      </div>
+
+      <!-- Cars Selection -->
+      <h3 class="mt-4">Choose a Car</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-4 col-sm-6" v-for="car in cars" :key="car.name">
+          <div class="card text-center">
+            <img :src="car.image" class="card-img-top" :alt="car.name" />
+            <div class="card-body">
+              <h5 class="card-title">{{ car.name }}</h5>
+              <p class="card-text">
+                Seats: {{ car.seats }} <br />
+                Gear: {{ car.gear }} <br />
+                Price: {{ car.price }}€ / day
+              </p>
+              <button
+                class="btn"
+                :class="
+                  selectedCar === car.name ? 'btn-success' : 'btn-primary'
+                "
+                @click="selectCar(car.name)"
+              >
+                {{ selectedCar === car.name ? "Selected" : "Select" }}
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="button-container">
-          <button class="back-button" @click="goBackC2">Back</button>
-          <button class="next-button" @click="showFlightC4Component">
-            Next
-          </button>
-        </div>
+      <!-- Buttons -->
+      <div class="button-container mt-4">
+        <button class="back-button" @click="goBackC2">Back</button>
+        <button
+          class="next-button"
+          :disabled="
+            !selectedAirport || !pickupDate || !returnDate || !selectedCar
+          "
+          @click="confirmCarRental"
+        >
+          Confirm
+        </button>
       </div>
     </div>
 
@@ -647,6 +680,7 @@ export default {
       showFlightSquareD: false,
       departureDate: "",
       returnDate: "",
+
       airports: [
         { name: "Zagreb", code: "ZAG" },
         { name: "Paris", code: "CDG" },
@@ -663,6 +697,36 @@ export default {
         { name: "Oslo", code: "OSL" },
         { name: "Zurich", code: "ZRH" },
         { name: "Amsterdam", code: "AMS" },
+      ],
+      selectedAirport: null,
+      pickupDate: "",
+      returnDate: "",
+      selectedCar: null,
+      cars: [
+        {
+          name: "Opel Zafira",
+          seats: 7,
+          suitcases: 4,
+          gear: "Automatic",
+          price: 50,
+          image: require("@/assets/Zafira.jpg"),
+        },
+        {
+          name: "VW Polo",
+          seats: 5,
+          suitcases: 2,
+          gear: "Manual",
+          price: 35,
+          image: require("@/assets/Polo.jpg"),
+        },
+        {
+          name: "Seat Arona",
+          seats: 5,
+          suitcases: 3,
+          gear: "Automatic",
+          price: 40,
+          image: require("@/assets/Arona.jpg"), // Postavi sliku koju si uploudovao
+        },
       ],
       selectedOrigin: null,
       selectedDestination: null,
@@ -744,6 +808,7 @@ export default {
   mounted() {
     this.initDatePickers();
   },
+
   methods: {
     hideFlightSquare() {
       this.$emit("close");
@@ -778,7 +843,7 @@ export default {
             },
           },
           localization: {
-            format: "dd/MM/yyyy",
+            format: "dd/MM/yyyy", // Postavi format na dd/MM/yyyy
           },
           restrictions: {
             minDate: this.getTomorrow(),
@@ -790,14 +855,7 @@ export default {
         );
 
         picker.subscribe("change", (e) => {
-          const dateWithRandomTime = this.addRandomTime(e.date);
-          const formattedDate = dateWithRandomTime.toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
+          const formattedDate = e.date.toLocaleDateString("en-GB"); // Formatiraj datum na dd/MM/yyyy
           this.departureDate = formattedDate;
           input.value = formattedDate;
         });
@@ -807,9 +865,20 @@ export default {
         );
       }
     },
+
     initializeReturnPicker() {
       const input = document.getElementById(this.returnInputId);
       if (input) {
+        const minDate = this.pickupDate
+          ? new Date(this.pickupDate)
+          : this.getTomorrow();
+
+        if (!minDate) {
+          console.warn("Pickup date is not valid. Resetting return picker.");
+          input.value = "";
+          return;
+        }
+
         const picker = new TempusDominus(input, {
           display: {
             components: {
@@ -821,12 +890,10 @@ export default {
             },
           },
           localization: {
-            format: "dd/MM/yyyy",
+            format: "dd/MM/yyyy", // Postavi format na dd/MM/yyyy
           },
           restrictions: {
-            minDate: this.departureDate
-              ? new Date(this.departureDate)
-              : this.getTomorrow(),
+            minDate: minDate, // Minimalni datum postavljen na pickupDate ili sutrašnji datum
           },
         });
 
@@ -836,20 +903,19 @@ export default {
 
         picker.subscribe("change", (e) => {
           const dateWithRandomTime = this.addRandomTime(e.date);
-          const formattedDate = dateWithRandomTime.toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
+          const formattedDate = dateWithRandomTime.toLocaleDateString("en-GB", {
+            day: "2-digit", // Dan u formatu 2 cifre
+            month: "2-digit", // Mesec u formatu 2 cifre
+            year: "numeric", // Godina u punom formatu
           });
           this.returnDate = formattedDate;
-          input.value = formattedDate;
+          input.value = formattedDate; // Postavi formatirani datum u input polje
         });
 
         this.$refs.returnButton.addEventListener("click", () => picker.show());
       }
     },
+
     getTomorrow() {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -958,6 +1024,7 @@ export default {
       );
     },
     goBackC2() {
+      this.resetFlightC3Data(); // Resetuje podatke specifične za FlightC3
       this.updateComponentVisibility(
         false,
         false,
@@ -1015,6 +1082,22 @@ export default {
       console.log(`Selected service: ${service}`);
       // Ovdje možete dodati logiku za odabranu uslugu (npr. dodavanje cijene)
     },
+    selectCar(carName) {
+      this.selectedCar = carName;
+    },
+    resetFlightC3Data() {
+      this.selectedAirport = null;
+      this.pickupDate = "";
+      this.returnDate = "";
+      this.selectedCar = null;
+
+      // Resetovanje pickera
+      const departurePicker = document.getElementById(this.departureInputId);
+      const returnPicker = document.getElementById(this.returnInputId);
+
+      if (departurePicker) departurePicker.value = "";
+      if (returnPicker) returnPicker.value = "";
+    },
   },
 };
 </script>
@@ -1041,10 +1124,12 @@ export default {
   z-index: 999;
   min-width: 1600px;
   min-height: 700px;
-  height: 700px; /* Set a fixed height */
+  height: 900px; /* Set a fixed height */
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto; /* Dodaj vertikalno skrolovanje */
+  max-height: 90vh; /* Ograniči maksimalnu visinu */
 }
 .flight-squareB {
   background-color: rgba(255, 255, 255, 0.9);
@@ -1449,6 +1534,29 @@ export default {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+}
+
+/* Smanjenje kartica i slika */
+.card {
+  max-width: 250px; /* Ograniči širinu kartice */
+  margin: 10px auto; /* Doda razmak između kartica */
+}
+
+.card img {
+  max-height: 120px; /* Smanji visinu slika */
+  object-fit: contain; /* Zadrži proporcije slike */
+}
+
+.card-title {
+  font-size: 1.2rem; /* Smanji veličinu naslova */
+}
+
+.card-text {
+  font-size: 0.9rem; /* Smanji veličinu teksta */
+}
+
+.row {
+  margin: 0 auto; /* Poravnaj sadržaj u centru */
 }
 
 /* FlightD CSS */
