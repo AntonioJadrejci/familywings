@@ -571,59 +571,71 @@
           class="right-image"
         />
       </div>
-      <div class="text-container">
-        <div class="purple-squares-container">
-          <!-- Display Departure Date and Flight Details -->
-          <div class="date-button" v-if="departureDate">
-            <div class="half-text">{{ departureDate }}</div>
-          </div>
 
-          <div class="purple-squareB">
-            <div class="half-text">
-              {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
-              ({{ selectedOrigin ? selectedOrigin.code : "" }}) -
-              {{
-                selectedDestination
-                  ? selectedDestination.name
-                  : "No Destination Selected"
-              }}
-              ({{ selectedDestination ? selectedDestination.code : "" }})
-            </div>
-          </div>
+      <h2>Shuttle Bus Service</h2>
 
-          <!-- Additional Return Details for Return Tickets -->
-          <template v-if="selectedTicketType === 'return'">
-            <div class="date-button" v-if="returnDate">
-              <div class="half-text">{{ returnDate }}</div>
-            </div>
-            <div class="purple-squareB">
-              <div class="half-text">
-                {{
-                  selectedDestination
-                    ? selectedDestination.name
-                    : "No Destination Selected"
-                }}
-                ({{ selectedDestination ? selectedDestination.code : "" }}) -
-                {{
-                  selectedOrigin ? selectedOrigin.name : "No Origin Selected"
-                }}
-                ({{ selectedOrigin ? selectedOrigin.code : "" }})
-              </div>
-            </div>
-          </template>
+      <!-- Select Airport -->
+      <div class="mb-4 d-flex justify-content-center">
+        <label for="selectAirport" class="form-label me-3"
+          >Select Airport:</label
+        >
+        <select
+          id="selectAirport"
+          class="form-select w-50"
+          v-model="selectedAirport"
+        >
+          <option
+            v-for="airport in airports"
+            :key="airport.code"
+            :value="airport.code"
+          >
+            {{ airport.name }} ({{ airport.code }})
+          </option>
+        </select>
+      </div>
 
-          <!-- Single Flight Price Purple Square -->
-          <div class="purple-squareB">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
-          </div>
-        </div>
+      <!-- Pickup Date -->
+      <div class="mb-4 d-flex justify-content-center">
+        <label for="pickupDate" class="form-label me-3">Pickup Date:</label>
+        <input
+          id="pickupDate"
+          type="date"
+          class="form-control"
+          v-model="pickupDate"
+          min="2024-11-22"
+          placeholder="dd/mm/yyyy"
+        />
+      </div>
 
-        <div class="button-container">
-          <button class="back-button" @click="goBackC3">Back</button>
-          <button class="next-button" @click="showFlightDComponent">
-            Next
-          </button>
-        </div>
+      <!-- Number of Tickets -->
+      <div class="mb-4 d-flex justify-content-center">
+        <label for="ticketCount" class="form-label me-3"
+          >Number of Tickets:</label
+        >
+        <select
+          id="ticketCount"
+          class="form-select w-50"
+          v-model.number="ticketCount"
+        >
+          <option v-for="n in 3" :key="n" :value="n">{{ n }} Ticket(s)</option>
+        </select>
+      </div>
+
+      <!-- Price Display -->
+      <div class="special-purple-square">
+        <span>Total Price: {{ totalPrice }}€</span>
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-container mt-4">
+        <button class="back-button" @click="goBackC2">Back</button>
+        <button
+          class="next-button"
+          :disabled="!selectedAirport || !pickupDate || !ticketCount"
+          @click="confirmShuttleBus"
+        >
+          Confirm
+        </button>
       </div>
     </div>
 
@@ -1559,5 +1571,25 @@ export default {
   margin: 0 auto; /* Poravnaj sadržaj u centru */
 }
 
+.d-flex {
+  display: flex;
+  align-items: center;
+}
+
+.w-50 {
+  width: 50%;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.me-3 {
+  margin-right: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
 /* FlightD CSS */
 </style>
