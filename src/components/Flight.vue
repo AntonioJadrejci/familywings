@@ -317,7 +317,7 @@
 
       <!-- Prikaz trenutne cijene leta i reset dugme -->
       <div class="special-purple-square">
-        <span>Flight Price: {{ totalPrice }}€</span>
+        <span>Flight Price: {{ finalPrice }}€</span>
         <button class="button secondary" @click="resetLuggage">
           Reset Luggage
         </button>
@@ -418,7 +418,7 @@
 
           <!-- Single Flight Price Purple Square -->
           <div class="purple-squareB">
-            <div class="half-text">Flight Price: {{ totalPrice }}€</div>
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
           </div>
         </div>
         <!-- New section for additional services -->
@@ -623,7 +623,7 @@
 
       <!-- Price Display -->
       <div class="special-purple-square">
-        <span>Total Price: {{ totalPrice }}€</span>
+        <span>Total Price: {{ finalPrice }}€</span>
       </div>
 
       <!-- Buttons -->
@@ -692,6 +692,10 @@ export default {
       showFlightSquareD: false,
       departureDate: "",
       returnDate: "",
+      ticketPrice: 5,
+      ticketCount: 1,
+
+      additionalCosts: 0, // Dodatni troškovi za prtljag, shuttle itd.
 
       airports: [
         { name: "Zagreb", code: "ZAG" },
@@ -793,18 +797,18 @@ export default {
           )
         : this.airports;
     },
-    totalPrice() {
+
+    finalPrice() {
+      const ticketPrice = this.ticketPrice * this.ticketCount;
       const luggagePrice = this.luggageTypes.reduce((acc, luggage) => {
         return acc + luggage.price * luggage.selectedCount;
       }, 0);
-      return this.finalPrice + luggagePrice;
-    },
-    finalPrice() {
-      let basePrice =
+      const basePrice =
         this.selectedTicketType === "return"
           ? this.basePriceOneWay * 2
           : this.basePriceOneWay;
-      return basePrice * this.numberOfPassengers;
+
+      return basePrice * this.numberOfPassengers + ticketPrice + luggagePrice;
     },
   },
   watch: {
@@ -834,10 +838,12 @@ export default {
     selectLuggage(luggage) {
       if (luggage.selectedCount < luggage.maxCount) {
         luggage.selectedCount++;
+        this.addCost(luggage.price);
       }
     },
     resetLuggage() {
       this.luggageTypes.forEach((luggage) => {
+        this.removeCost(luggage.price * luggage.selectedCount);
         luggage.selectedCount = 0;
       });
     },
@@ -1109,6 +1115,20 @@ export default {
 
       if (departurePicker) departurePicker.value = "";
       if (returnPicker) returnPicker.value = "";
+    },
+    addCost(amount) {
+      this.additionalCosts += amount;
+    },
+    removeCost(amount) {
+      this.additionalCosts -= amount;
+    },
+    resetCosts() {
+      this.additionalCosts = 0;
+    },
+    confirmShuttleBus() {
+      // Dodaj cenu za shuttle bus (5€ po karti)
+      this.addCost(this.ticketPrice * this.ticketCount);
+      this.showFlightDComponent(); // Prelazak na sledeći prozor
     },
   },
 };
