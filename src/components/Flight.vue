@@ -92,28 +92,7 @@
                 </p>
               </div>
             </div>
-
-            <!-- Treci Button (Select Departure Date) -->
-            <div v-show="ticketTypeSelected" class="col-md-6 mb-3">
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="departureDate"
-                  placeholder="Select Departure Date"
-                  :id="departureInputId"
-                  ref="departureInput"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  ref="departureButton"
-                >
-                  <i class="fa fa-calendar"></i>
-                </button>
-              </div>
-            </div>
-            <!-- Cetvrti Button-->
+            <!-- Treci Button -->
             <div class="col-md-6 mb-3">
               <div class="dropdown">
                 <a
@@ -146,24 +125,44 @@
                 </ul>
               </div>
             </div>
-            <!-- Peti Button (Select Return Date) -->
-            <div v-show="showReturnDate" class="col-md-6 mb-3">
-              <div class="input-group">
+
+            <!-- Cetvrti Button (Select Departure Date) -->
+            <div class="row" v-if="selectedTicketType === 'one-way'">
+              <div class="col-md-6 mb-3">
+                <label for="pickupDate" class="form-label"
+                  >Departure Date</label
+                >
                 <input
-                  type="text"
+                  id="pickupDate"
+                  type="date"
+                  class="form-control"
+                  v-model="pickupDate"
+                  :min="getDynamicMinDate()"
+                />
+              </div>
+            </div>
+
+            <!-- Peti Button (Select Return Date) -->
+            <div class="row" v-if="selectedTicketType === 'return'">
+              <div class="col-md-6 mb-3">
+                <label for="pickupDate" class="form-label">Pickup Date</label>
+                <input
+                  id="pickupDate"
+                  type="date"
+                  class="form-control"
+                  v-model="pickupDate"
+                  :min="getDynamicMinDate()"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="returnDate" class="form-label">Return Date</label>
+                <input
+                  id="returnDate"
+                  type="date"
                   class="form-control"
                   v-model="returnDate"
-                  placeholder="Select Return Date"
-                  :id="returnInputId"
-                  ref="returnInput"
+                  :min="pickupDate || getDynamicMinDate()"
                 />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  ref="returnButton"
-                >
-                  <i class="fa fa-calendar"></i>
-                </button>
               </div>
             </div>
           </div>
@@ -245,11 +244,6 @@
       </div>
       <div class="text-container">
         <div class="purple-squares-container">
-          <!-- Display Departure Date and Flight Details -->
-          <div class="date-button" v-if="departureDate">
-            <div class="half-text">{{ departureDate }}</div>
-          </div>
-
           <div class="purple-squareB">
             <div class="half-text">
               {{ selectedOrigin ? selectedOrigin.name : "No Origin Selected" }}
@@ -265,9 +259,6 @@
 
           <!-- Additional Return Details for Return Tickets -->
           <template v-if="selectedTicketType === 'return'">
-            <div class="date-button" v-if="returnDate">
-              <div class="half-text">{{ returnDate }}</div>
-            </div>
             <div class="purple-squareB">
               <div class="half-text">
                 {{
@@ -779,14 +770,14 @@ export default {
         {
           name: "Checked Bag x 1",
           price: 25,
-          maxCount: 2,
+          maxCount: 1,
           selectedCount: 0,
           description: "MAX 20 KG, 99 x 119 x 171 cm",
         },
         {
           name: "Checked Bag x 2",
           price: 35,
-          maxCount: 2,
+          maxCount: 1,
           selectedCount: 0,
           description: "MAX 32 KG, 81 x 119 x 171 cm",
         },
@@ -1124,6 +1115,9 @@ export default {
     selectTicket(ticketType) {
       this.selectedTicketType = ticketType;
       this.ticketTypeSelected = true;
+    },
+    selectTicket(type) {
+      this.selectedTicketType = type; // Set the selected ticket type
     },
     selectNumberOfPassengers(num) {
       this.numberOfPassengers = num;
