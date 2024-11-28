@@ -28,142 +28,132 @@
             rel="stylesheet"
           />
           <!-- Prvi Button-->
+          <div class="mb-3">
+            <label for="originAirport" class="form-label">Origin</label>
+            <select
+              id="originAirport"
+              class="form-select"
+              v-model="selectedOrigin"
+            >
+              <option
+                v-for="airport in airports"
+                :key="airport.code"
+                :value="airport"
+              >
+                {{ airport.name }} ({{ airport.code }})
+              </option>
+            </select>
+          </div>
+          <!-- Drugi Button -->
+
+          <div class="mb-3">
+            <label for="destinationAirport" class="form-label"
+              >Destination</label
+            >
+            <select
+              id="destinationAirport"
+              class="form-select"
+              v-model="selectedDestination"
+            >
+              <option
+                v-for="airport in airports"
+                :key="airport.code"
+                :value="airport"
+              >
+                {{ airport.name }} ({{ airport.code }})
+              </option>
+            </select>
+          </div>
+
           <div class="row">
-            <div class="col">
-              <div class="col-md-6 mb-3">
-                <div class="dropdown">
-                  <button
-                    class="btn btn-info btn-lg dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
+            <div class="col-md-6">
+              <p>
+                Selected Origin:
+                {{ selectedOrigin ? selectedOrigin.name : "None" }}
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p>
+                Selected Destination:
+                {{ selectedDestination ? selectedDestination.name : "None" }}
+              </p>
+            </div>
+          </div>
+          <!-- Treci Button -->
+          <div class="col-md-6 mb-3">
+            <div class="dropdown">
+              <a
+                class="btn btn-info btn-lg dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Ticket
+              </a>
+
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click="selectTicket('one-way')"
+                    >One Way</a
                   >
-                    Origin
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li v-for="(airport, index) in airports" :key="index">
-                      <a
-                        class="dropdown-item"
-                        href="#"
-                        @click="selectOrigin(airport)"
-                        >{{ airport.name }} ({{ airport.code }})</a
-                      >
-                    </li>
-                  </ul>
-                </div>
-              </div>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click="selectTicket('return')"
+                    >Return</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Cetvrti Button (Select Departure Date) -->
+          <div class="row" v-if="selectedTicketType === 'one-way'">
+            <div class="col-md-6 mb-3">
+              <label for="departureDateFlight" class="form-label"
+                >Departure Date</label
+              >
+              <input
+                id="departureDateFlight"
+                type="date"
+                class="form-control"
+                v-model="departureDateFlight"
+                :min="getDynamicMinDate()"
+              />
+            </div>
+          </div>
+
+          <!-- Peti Button (Select Return Date) -->
+          <div class="row" v-if="selectedTicketType === 'return'">
+            <div class="col-md-6 mb-3">
+              <label for="departureDateFlight" class="form-label"
+                >Departure Date</label
+              >
+              <input
+                id="departureDateFlight"
+                type="date"
+                class="form-control"
+                v-model="departureDateFlight"
+                :min="getDynamicMinDate()"
+              />
             </div>
             <div class="col-md-6 mb-3">
-              <!-- Drugi Button -->
-              <div class="dropdown">
-                <a
-                  class="btn btn-info btn-lg dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Destination
-                </a>
-
-                <ul class="dropdown-menu">
-                  <li v-for="(airport, index) in filteredAirports" :key="index">
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      @click="selectDestination(airport)"
-                      >{{ airport.name }} ({{ airport.code }})</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <p>
-                  Selected Origin:
-                  {{ selectedOrigin ? selectedOrigin.name : "None" }}
-                </p>
-              </div>
-              <div class="col-md-6">
-                <p>
-                  Selected Destination:
-                  {{ selectedDestination ? selectedDestination.name : "None" }}
-                </p>
-              </div>
-            </div>
-            <!-- Treci Button -->
-            <div class="col-md-6 mb-3">
-              <div class="dropdown">
-                <a
-                  class="btn btn-info btn-lg dropdown-toggle"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Ticket
-                </a>
-
-                <ul class="dropdown-menu">
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      @click="selectTicket('one-way')"
-                      >One Way</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      @click="selectTicket('return')"
-                      >Return</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Cetvrti Button (Select Departure Date) -->
-            <div class="row" v-if="selectedTicketType === 'one-way'">
-              <div class="col-md-6 mb-3">
-                <label for="pickupDate" class="form-label"
-                  >Departure Date</label
-                >
-                <input
-                  id="pickupDate"
-                  type="date"
-                  class="form-control"
-                  v-model="pickupDate"
-                  :min="getDynamicMinDate()"
-                />
-              </div>
-            </div>
-
-            <!-- Peti Button (Select Return Date) -->
-            <div class="row" v-if="selectedTicketType === 'return'">
-              <div class="col-md-6 mb-3">
-                <label for="pickupDate" class="form-label">Pickup Date</label>
-                <input
-                  id="pickupDate"
-                  type="date"
-                  class="form-control"
-                  v-model="pickupDate"
-                  :min="getDynamicMinDate()"
-                />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="returnDate" class="form-label">Return Date</label>
-                <input
-                  id="returnDate"
-                  type="date"
-                  class="form-control"
-                  v-model="returnDate"
-                  :min="pickupDate || getDynamicMinDate()"
-                />
-              </div>
+              <label for="returnDateFlight" class="form-label"
+                >Return Date</label
+              >
+              <input
+                id="returnDateFlight"
+                type="date"
+                class="form-control"
+                v-model="returnDateFlight"
+                :min="pickupDate || getDynamicMinDate()"
+              />
             </div>
           </div>
 
@@ -463,11 +453,11 @@
 
       <!-- Select Airport -->
       <div class="mb-3">
-        <label for="selectAirport" class="form-label">Select Airport</label>
+        <label for="selectAirportC3" class="form-label">Select Airport</label>
         <select
-          id="selectAirport"
+          id="selectAirportC3"
           class="form-select"
-          v-model="selectedAirport"
+          v-model="selectedAirportC3"
         >
           <option
             v-for="airport in airports"
@@ -482,22 +472,22 @@
       <!-- Pickup and Return Dates -->
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="pickupDate" class="form-label">Pickup Date</label>
+          <label for="pickupDateC3" class="form-label">Pickup Date</label>
           <input
-            id="pickupDate"
+            id="pickupDateC3"
             type="date"
             class="form-control"
-            v-model="pickupDate"
+            v-model="pickupDateC3"
             :min="getDynamicMinDate()"
           />
         </div>
         <div class="col-md-6 mb-3">
-          <label for="returnDate" class="form-label">Return Date</label>
+          <label for="returnDateC3" class="form-label">Return Date</label>
           <input
-            id="returnDate"
+            id="returnDateC3"
             type="date"
             class="form-control"
-            v-model="returnDate"
+            v-model="returnDateC3"
             :min="pickupDate || getDynamicMinDate()"
           />
         </div>
@@ -570,13 +560,13 @@
 
       <!-- Select Airport -->
       <div class="mb-4 d-flex justify-content-center">
-        <label for="selectAirport" class="form-label me-3"
+        <label for="selectAirportC4" class="form-label me-3"
           >Select Airport:</label
         >
         <select
-          id="selectAirport"
+          id="selectAirportC4"
           class="form-select w-50"
-          v-model="selectedAirport"
+          v-model="selectedAirportC4"
         >
           <option
             v-for="airport in airports"
@@ -590,12 +580,14 @@
 
       <!-- Pickup Date -->
       <div class="mb-4 d-flex justify-content-center">
-        <label for="pickupDate" class="form-label me-3">Pickup Date:</label>
+        <label for="shuttlePickupDate" class="form-label me-3"
+          >Pickup Date:</label
+        >
         <input
-          id="pickupDate"
+          id="shuttlePickupDate"
           type="date"
           class="form-control"
-          v-model="pickupDate"
+          v-model="shuttlePickupDate"
           :min="getDynamicMinDate()"
           placeholder="dd/mm/yyyy"
         />
@@ -689,6 +681,17 @@ export default {
       showFlightSquareD: false,
       departureDate: "",
       returnDate: "",
+      selectedOrigin: null, // Za prvi button (Origin)
+      selectedDestination: null, // Za drugi button (Destination)
+      selectedAirportC3: null, // Za FlightC3
+      selectedAirportC4: null, // Za FlightC4
+      // Dodani podaci
+      departureDateFlight: "", // Za "Departure Date"
+      returnDateFlight: "", // Za "Return Date"
+      shuttlePickupDate: "",
+      pickupDateC3: "", // Dodano za 'Pickup Date' u FlightC3
+      returnDateC3: "", // Dodano za 'Return Date' u FlightC3
+      selectedTicketType: "one-way", // Podrazumevano, samo jedan smer
       ticketPrice: 5,
       ticketCount: 0,
 
@@ -1114,7 +1117,6 @@ export default {
     },
     selectTicket(ticketType) {
       this.selectedTicketType = ticketType;
-      this.ticketTypeSelected = true;
     },
     selectTicket(type) {
       this.selectedTicketType = type; // Set the selected ticket type
@@ -1172,6 +1174,26 @@ export default {
   watch: {
     pickupDate: "calculateTotalPrice",
     returnDate: "calculateTotalPrice",
+    selectedOrigin(newVal) {
+      if (
+        newVal &&
+        this.selectedDestination &&
+        newVal.code === this.selectedDestination.code
+      ) {
+        this.selectedDestination = null; // Resetiraj ako su isti
+        alert("Origin and Destination cannot be the same.");
+      }
+    },
+    selectedDestination(newVal) {
+      if (
+        newVal &&
+        this.selectedOrigin &&
+        newVal.code === this.selectedOrigin.code
+      ) {
+        this.selectedOrigin = null; // Resetiraj ako su isti
+        alert("Destination and Origin cannot be the same.");
+      }
+    },
   },
 };
 </script>
