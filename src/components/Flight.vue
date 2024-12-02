@@ -16,18 +16,14 @@
         />
       </div>
       <div class="text-container">
-        <h1>Welcome to Flight Services</h1>
-        <p>
-          We provide excellent flight services to various destinations
-          worldwide.
-        </p>
+        <h1>Flight Services</h1>
 
         <div class="purple-squares-container">
           <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
             rel="stylesheet"
           />
-          <!-- Prvi Button-->
+          <!-- Prvi Button -->
           <div class="mb-3">
             <label for="originAirport" class="form-label">Origin</label>
             <select
@@ -45,7 +41,6 @@
             </select>
           </div>
           <!-- Drugi Button -->
-
           <div class="mb-3">
             <label for="destinationAirport" class="form-label"
               >Destination</label
@@ -56,7 +51,7 @@
               v-model="selectedDestination"
             >
               <option
-                v-for="airport in airports"
+                v-for="airport in filteredAirports"
                 :key="airport.code"
                 :value="airport"
               >
@@ -65,64 +60,32 @@
             </select>
           </div>
 
-          <div class="row">
-            <div class="col-md-6">
-              <p>
-                Selected Origin:
-                {{ selectedOrigin ? selectedOrigin.name : "None" }}
-              </p>
-            </div>
-            <div class="col-md-6">
-              <p>
-                Selected Destination:
-                {{ selectedDestination ? selectedDestination.name : "None" }}
-              </p>
-            </div>
-          </div>
           <!-- Treci Button -->
-          <div class="col-md-6 mb-3">
-            <div class="dropdown">
-              <a
-                class="btn btn-info btn-lg dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Ticket
-              </a>
-
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click="selectTicket('one-way')"
-                    >One Way</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click="selectTicket('return')"
-                    >Return</a
-                  >
-                </li>
-              </ul>
-            </div>
+          <div class="mb-3">
+            <label for="ticketType" class="form-label">Ticket Type</label>
+            <select
+              id="ticketType"
+              class="form-select"
+              v-model="selectedTicketType"
+            >
+              <option value="one-way">One Way</option>
+              <option value="return">Return</option>
+            </select>
           </div>
 
           <!-- Cetvrti Button (Select Departure Date) -->
-          <div class="row" v-if="selectedTicketType === 'one-way'">
-            <div class="col-md-6 mb-3">
+          <div
+            class="row justify-content-center"
+            v-if="selectedTicketType === 'one-way'"
+          >
+            <div class="col-md-6 mb-3 text-center">
               <label for="departureDateFlight" class="form-label"
                 >Departure Date</label
               >
               <input
                 id="departureDateFlight"
                 type="date"
-                class="form-control"
+                class="form-control centered-date-input"
                 v-model="departureDateFlight"
                 :min="getDynamicMinDate()"
               />
@@ -157,44 +120,20 @@
             </div>
           </div>
 
-          <!-- Sesti Button-->
-          <div class="col-md-6 mb-3">
-            <div class="dropdown">
-              <button
-                class="btn btn-info btn-lg dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Passengers
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click="selectNumberOfPassengers(1)"
-                    >1</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click="selectNumberOfPassengers(2)"
-                    >2</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="dropdown-item"
-                    href="#"
-                    @click="selectNumberOfPassengers(3)"
-                    >3</a
-                  >
-                </li>
-              </ul>
-            </div>
+          <!-- Sesti Button -->
+          <div class="mb-3">
+            <label for="numberOfPassengers" class="form-label"
+              >Passengers</label
+            >
+            <select
+              id="numberOfPassengers"
+              class="form-select"
+              v-model="numberOfPassengers"
+            >
+              <option v-for="num in [1, 2, 3]" :key="num" :value="num">
+                {{ num }} Passenger{{ num > 1 ? "s" : "" }}
+              </option>
+            </select>
           </div>
         </div>
 
@@ -1180,7 +1119,7 @@ export default {
         this.selectedDestination &&
         newVal.code === this.selectedDestination.code
       ) {
-        this.selectedDestination = null; // Resetiraj ako su isti
+        this.selectedDestination = null; // Reset destination if it matches origin
         alert("Origin and Destination cannot be the same.");
       }
     },
@@ -1190,7 +1129,7 @@ export default {
         this.selectedOrigin &&
         newVal.code === this.selectedOrigin.code
       ) {
-        this.selectedOrigin = null; // Resetiraj ako su isti
+        this.selectedOrigin = null; // Reset origin if it matches destination
         alert("Destination and Origin cannot be the same.");
       }
     },
@@ -1675,7 +1614,30 @@ export default {
 }
 
 .text-center {
-  text-align: center;
+  text-align: center; /* Centriranje labela i sadržaja */
 }
+.row.justify-content-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Prostor oko elemenata */
+  width: 100%; /* Osiguraj da zauzima punu širinu */
+}
+
+.col-md-6.mb-3.text-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centriraj po vertikali */
+  max-width: 300px; /* Ograniči maksimalnu širinu */
+}
+
+.centered-date-input {
+  margin: 0 auto; /* Centriranje unosa */
+  text-align: center; /* Centriraj tekst unutar unosa */
+  width: 100%; /* Popuni prostor */
+  max-width: 300px; /* Maksimalna širina */
+}
+
 /* FlightD CSS */
 </style>
