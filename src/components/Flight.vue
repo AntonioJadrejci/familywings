@@ -115,7 +115,7 @@
                 type="date"
                 class="form-control"
                 v-model="returnDateFlight"
-                :min="pickupDate || getDynamicMinDate()"
+                :min="departureDateFlight || getDynamicMinDate()"
               />
             </div>
           </div>
@@ -427,7 +427,7 @@
             type="date"
             class="form-control"
             v-model="returnDateC3"
-            :min="pickupDate || getDynamicMinDate()"
+            :min="pickupDateC3 || getDynamicMinDate()"
           />
         </div>
       </div>
@@ -878,7 +878,7 @@ export default {
     },
     getDynamicMinDate() {
       const today = new Date();
-      today.setDate(today.getDate() + 1);
+      today.setDate(today.getDate() + 1); // Minimum je sutrašnji datum
       return today.toISOString().split("T")[0];
     },
     calculateTotalPrice() {
@@ -1131,6 +1131,16 @@ export default {
       ) {
         this.selectedOrigin = null; // Reset origin if it matches destination
         alert("Destination and Origin cannot be the same.");
+      }
+    },
+    departureDateFlight(newVal, oldVal) {
+      if (new Date(this.returnDateFlight) <= new Date(newVal)) {
+        this.returnDateFlight = ""; // Resetovanje povratnog datuma ako je nevalidan
+      }
+    },
+    pickupDateC3(newVal, oldVal) {
+      if (new Date(this.returnDateC3) <= new Date(newVal)) {
+        this.returnDateC3 = ""; // Resetovanje povratnog datuma ako je nevalidan
       }
     },
   },
