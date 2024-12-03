@@ -149,7 +149,12 @@
 
         <div class="button-container">
           <button class="back-button" @click="hideFlightSquare">Close</button>
-          <button class="next-button" @click="showFlightBComponent">
+          <button
+            class="next-button"
+            :class="{ disabled: !canProceed }"
+            :disabled="!canProceed"
+            @click="showFlightBComponent"
+          >
             Next
           </button>
         </div>
@@ -333,14 +338,6 @@
         />
       </div>
       <div class="text-container">
-        <div class="purple-squares-container">
-          <!-- Additional Return Details for Return Tickets -->
-
-          <!-- Single Flight Price Purple Square -->
-          <div class="purple-squareB">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
-          </div>
-        </div>
         <!-- New section for additional services -->
         <div class="services-header">
           <h2>Other services?</h2>
@@ -360,6 +357,14 @@
             <button class="service-button" @click="showFlightC4Component">
               Shuttle Bus
             </button>
+          </div>
+        </div>
+        <div class="purple-squares-container">
+          <!-- Additional Return Details for Return Tickets -->
+
+          <!-- Single Flight Price Purple Square -->
+          <div class="purple-squareB">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
           </div>
         </div>
 
@@ -447,12 +452,10 @@
               </p>
               <button
                 class="btn"
-                :class="
-                  selectedCar === car.name ? 'btn-success' : 'btn-primary'
-                "
+                :class="selectedCar === car ? 'btn-success' : 'btn-primary'"
                 @click="selectCar(car)"
               >
-                {{ selectedCar === car.name ? "Selected" : "Select" }}
+                {{ selectedCar === car ? "Selected" : "Select" }}
               </button>
             </div>
           </div>
@@ -469,10 +472,9 @@
         <button class="back-button" @click="goBackC21">Back</button>
         <button
           class="next-button"
-          :disabled="
-            !selectedAirport || !pickupDate || !returnDate || !selectedCar
-          "
-          @click="confirmCarRental"
+          :class="{ disabled: !canConfirm }"
+          :disabled="!canConfirm"
+          @click="showFlightDComponent"
         >
           Confirm
         </button>
@@ -559,8 +561,9 @@
         <button class="back-button" @click="goBackC2">Back</button>
         <button
           class="next-button"
-          :disabled="!selectedAirport || !pickupDate || ticketCount === 0"
-          @click="confirmShuttleBus"
+          :class="{ disabled: !canConfirmShuttle }"
+          :disabled="!canConfirmShuttle"
+          @click="showFlightDComponent"
         >
           Confirm
         </button>
@@ -583,6 +586,10 @@
           <div class="form-group">
             <label for="cvv">CVV</label>
             <input type="text" id="cvv" v-model="cvv" />
+          </div>
+          <!-- Single Flight Price Purple Square -->
+          <div class="purple-squareB">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
           </div>
         </div>
       </div>
@@ -753,6 +760,34 @@ export default {
     shuttleBusPrice() {
       return this.ticketCount * this.ticketPrice; // Kalkulacija cene
     },
+    canProceed() {
+      // Provjeri da li su svi uvjeti ispunjeni
+      const isDepartureDateSet = !!this.departureDateFlight;
+      const isReturnDateSet =
+        this.selectedTicketType === "return" ? !!this.returnDateFlight : true;
+      return (
+        this.selectedOrigin &&
+        this.selectedDestination &&
+        isDepartureDateSet &&
+        isReturnDateSet
+      );
+    },
+    canConfirm() {
+      // Provjera da li su svi uvjeti za "Confirm" dugme ispunjeni
+      return (
+        this.selectedAirportC3 &&
+        this.pickupDateC3 &&
+        this.returnDateC3 &&
+        this.selectedCar
+      );
+    },
+
+    canConfirmShuttle() {
+      // Provjera da li su svi uvjeti ispunjeni za aktivaciju Confirm dugmeta
+      return (
+        this.selectedAirportC4 && this.shuttlePickupDate && this.ticketCount > 0
+      );
+    },
   },
   watch: {
     showFlightSquare(newVal) {
@@ -882,13 +917,13 @@ export default {
       return today.toISOString().split("T")[0];
     },
     calculateTotalPrice() {
-      if (this.pickupDate && this.returnDate && this.selectedCar) {
-        const pickup = new Date(this.pickupDate);
-        const returnD = new Date(this.returnDate);
-        const days = Math.ceil((returnD - pickup) / (1000 * 60 * 60 * 24)) + 1;
+      if (this.pickupDateC3 && this.returnDateC3 && this.selectedCar) {
+        const pickup = new Date(this.pickupDateC3);
+        const returnD = new Date(this.returnDateC3);
+        const days = Math.ceil((returnD - pickup) / (1000 * 60 * 60 * 24)) + 1; // Uključuje dan pickup-a
         this.totalCarRentalPrice = days * this.selectedCar.price;
       } else {
-        this.totalCarRentalPrice = null;
+        this.totalCarRentalPrice = null; // Resetiraj cijenu ako uvjeti nisu ispunjeni
       }
     },
     getTomorrow() {
@@ -1075,13 +1110,13 @@ export default {
     },
     selectCar(car) {
       this.selectedCar = car;
-      this.calculateTotalPrice();
+      this.calculateTotalPrice(); // Recalculate total price on car selection
     },
 
     resetFlightC3Data() {
-      this.selectedAirport = null;
-      this.pickupDate = "";
-      this.returnDate = "";
+      this.selectedAirportC3 = null;
+      this.pickupDateC3 = "";
+      this.returnDateC3 = "";
       this.selectedCar = null;
       this.totalCarRentalPrice = null;
     },
@@ -1304,6 +1339,11 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+}
+
+.next-button.disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 .back-button {
