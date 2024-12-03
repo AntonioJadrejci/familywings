@@ -572,30 +572,175 @@
 
     <!-- FlightD Square -->
     <div class="flight-square" v-if="showFlightSquareD">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
       <div class="text-container">
         <div class="text-content">
-          <h1>Payment Information</h1>
-          <div class="form-group">
-            <label for="credit-card">Credit Card Number</label>
-            <input type="text" id="credit-card" v-model="creditCardNumber" />
+          <h1>Personal and Payment Information</h1>
+
+          <!-- Personal Information Section -->
+          <div class="mt-4">
+            <h3 class="mb-3">Personal Information</h3>
+            <div class="row g-3">
+              <!-- First Name -->
+              <div class="col-md-6">
+                <label for="firstName" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  class="form-control"
+                  v-model="firstName"
+                  placeholder="Enter your first name"
+                  required
+                />
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-md-6">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  class="form-control"
+                  v-model="lastName"
+                  placeholder="Enter your last name"
+                  required
+                />
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-6">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input
+                  type="date"
+                  id="dob"
+                  class="form-control"
+                  v-model="dateOfBirth"
+                  :max="getDynamicMinDate()"
+                  required
+                />
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-control"
+                  v-model="email"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <!-- Phone Number -->
+              <div class="col-md-12">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  class="form-control"
+                  v-model="phoneNumber"
+                  placeholder="Enter your phone number"
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="expiration-date">Expiration Date</label>
-            <input type="text" id="expiration-date" v-model="expirationDate" />
+
+          <!-- Payment Information Section -->
+          <div class="mt-5">
+            <h3 class="mb-3">Payment Information</h3>
+
+            <!-- Credit Card Number -->
+            <div class="form-group mb-3">
+              <label for="credit-card" class="form-label"
+                >Credit Card Number</label
+              >
+              <input
+                type="text"
+                id="credit-card"
+                class="form-control"
+                v-model="formattedCardNumber"
+                @input="formatCardNumber"
+                placeholder="XXXX XXXX XXXX XXXX"
+                maxlength="19"
+              />
+            </div>
+
+            <!-- Expiration Date -->
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="expiration-date" class="form-label"
+                  >Expiration Date</label
+                >
+                <input
+                  type="text"
+                  id="expiration-date"
+                  class="form-control"
+                  v-model="formattedExpirationDate"
+                  @input="formatExpirationDate"
+                  placeholder="MM/YY"
+                  maxlength="5"
+                />
+              </div>
+
+              <!-- CVV -->
+              <div class="col-md-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input
+                  type="text"
+                  id="cvv"
+                  class="form-control"
+                  v-model="cvv"
+                  @input="validateCVV"
+                  placeholder="XXX"
+                  maxlength="3"
+                />
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="cvv">CVV</label>
-            <input type="text" id="cvv" v-model="cvv" />
-          </div>
-          <!-- Single Flight Price Purple Square -->
-          <div class="purple-squareB">
+
+          <!-- Display Price -->
+          <div class="purple-squareB mt-4">
             <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+          </div>
+          <!--  Car Price  -->
+          <div
+            class="special-purple-square"
+            v-if="totalCarRentalPrice !== null"
+          >
+            <span>Car Price: {{ totalCarRentalPrice }}€</span>
+          </div>
+          <!-- Shuttle Bus Price -->
+          <div class="special-purple-square">
+            <span>Bus Price: {{ shuttleBusPrice }}€</span>
           </div>
         </div>
       </div>
-      <div class="button-container">
+      <!-- Submit Button -->
+      <div class="button-container mt-4">
         <button class="back-button" @click="goBackC">Back</button>
-        <button class="next-button" @click="submitPayment">Submit</button>
+        <button
+          class="next-button"
+          :class="{ disabled: !canSubmit }"
+          :disabled="!canSubmit"
+          @click="submitPayment"
+        >
+          Submit
+        </button>
       </div>
     </div>
   </div>
@@ -642,6 +787,11 @@ export default {
       ticketCount: 0,
 
       additionalCosts: 0, // Dodatni troškovi za prtljag, shuttle itd.
+      firstName: "", // Dodato
+      lastName: "", // Dodato
+      dateOfBirth: "", // Dodato
+      email: "", // Dodato
+      phoneNumber: "", // Dodato
 
       airports: [
         { name: "Zagreb", code: "ZAG" },
@@ -786,6 +936,18 @@ export default {
       // Provjera da li su svi uvjeti ispunjeni za aktivaciju Confirm dugmeta
       return (
         this.selectedAirportC4 && this.shuttlePickupDate && this.ticketCount > 0
+      );
+    },
+    canSubmit() {
+      return (
+        this.firstName &&
+        this.lastName &&
+        this.dateOfBirth &&
+        this.email &&
+        this.phoneNumber &&
+        this.creditCardNumber.length === 16 &&
+        this.expirationDate.length === 4 &&
+        this.cvv.length === 3
       );
     },
   },
@@ -1143,6 +1305,30 @@ export default {
         totalPrice: this.totalCarRentalPrice,
       });
       // Implement logic for confirmation
+    },
+    formatCardNumber() {
+      // Uklanjamo sve nebrojčane znakove i dodajemo razmake nakon svake 4 znamenke
+      this.creditCardNumber = this.creditCardNumber
+        .replace(/\D/g, "")
+        .slice(0, 16);
+      this.formattedCardNumber = this.creditCardNumber
+        .replace(/(.{4})/g, "$1 ")
+        .trim();
+    },
+    formatExpirationDate() {
+      // Uklanjamo sve nebrojčane znakove i formatiramo kao MM/YY
+      const cleaned = this.expirationDate.replace(/\D/g, "").slice(0, 4);
+      if (cleaned.length > 2) {
+        this.formattedExpirationDate = `${cleaned.slice(0, 2)}/${cleaned.slice(
+          2
+        )}`;
+      } else {
+        this.formattedExpirationDate = cleaned;
+      }
+    },
+    validateCVV() {
+      // Ograničavamo unos na 3 broja
+      this.cvv = this.cvv.replace(/\D/g, "").slice(0, 3);
     },
   },
   watch: {
