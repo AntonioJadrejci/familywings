@@ -691,7 +691,7 @@
                   id="expiration-date"
                   class="form-control"
                   v-model="formattedExpirationDate"
-                  @input="formatExpirationDate"
+                  @input="validateAndFormatExpirationDate"
                   placeholder="MM/YY"
                   maxlength="5"
                 />
@@ -712,6 +712,56 @@
               </div>
             </div>
           </div>
+
+          <!-- Display Price -->
+          <div class="purple-squareB mt-4">
+            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
+          </div>
+          <!--  Car Price  -->
+          <div
+            class="special-purple-square"
+            v-if="totalCarRentalPrice !== null"
+          >
+            <span>Car Price: {{ totalCarRentalPrice }}€</span>
+          </div>
+          <!-- Shuttle Bus Price -->
+          <div class="special-purple-square">
+            <span>Bus Price: {{ shuttleBusPrice }}€</span>
+          </div>
+        </div>
+      </div>
+      <!-- Submit Button -->
+      <div class="button-container mt-4">
+        <button class="back-button" @click="goBackC">Back</button>
+        <button
+          class="next-button"
+          :class="{ disabled: !canSubmit }"
+          :disabled="!canSubmit"
+          @click="showFlightD2Component"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <!-- FlightD2 Square -->
+    <div class="flight-square" v-if="showFlightSquareD2">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="text-content">
+          <h1>Personal and Payment Information</h1>
 
           <!-- Display Price -->
           <div class="purple-squareB mt-4">
@@ -770,6 +820,7 @@ export default {
       showFlightSquareC3: false,
       showFlightSquareC4: false,
       showFlightSquareD: false,
+      showFlightSquareD2: false,
       departureDate: "",
       returnDate: "",
       selectedOrigin: null, // Za prvi button (Origin)
@@ -849,7 +900,10 @@ export default {
       basePriceOneWay: 30,
       creditCardNumber: "",
       expirationDate: "",
+      formattedCardNumber: "",
+      formattedExpirationDate: "",
       cvv: "",
+
       hoveredLuggageType: "", // Dodajemo novu promenljivu
       luggageTypes: [
         {
@@ -945,8 +999,8 @@ export default {
         this.dateOfBirth &&
         this.email &&
         this.phoneNumber &&
-        this.creditCardNumber.length === 16 &&
-        this.expirationDate.length === 4 &&
+        this.formattedCardNumber.replace(/\s/g, "").length === 16 &&
+        this.formattedExpirationDate.length === 5 &&
         this.cvv.length === 3
       );
     },
@@ -1111,6 +1165,7 @@ export default {
         false,
         false,
         false,
+        false,
         false
       );
     },
@@ -1119,6 +1174,7 @@ export default {
         false,
         false,
         true,
+        false,
         false,
         false,
         false,
@@ -1133,6 +1189,7 @@ export default {
         true,
         false,
         false,
+        false,
         false
       );
     },
@@ -1143,6 +1200,7 @@ export default {
         false,
         false,
         true,
+        false,
         false,
         false
       );
@@ -1155,11 +1213,25 @@ export default {
         false,
         false,
         true,
+        false,
         false
       );
     },
     showFlightDComponent() {
       this.updateComponentVisibility(
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false
+      );
+    },
+    showFlightD2Component() {
+      this.updateComponentVisibility(
+        false,
         false,
         false,
         false,
@@ -1181,6 +1253,7 @@ export default {
         false,
         false,
         false,
+        false,
         false
       );
     },
@@ -1189,6 +1262,7 @@ export default {
         false,
         false,
         true,
+        false,
         false,
         false,
         false,
@@ -1202,6 +1276,7 @@ export default {
         false,
         false,
         true,
+        false,
         false,
         false,
         false
@@ -1218,6 +1293,7 @@ export default {
         true,
         false,
         false,
+        false,
         false
       );
     },
@@ -1229,10 +1305,11 @@ export default {
         false,
         true,
         false,
+        false,
         false
       );
     },
-    updateComponentVisibility(local, b, c, c2, c3, c4, d) {
+    updateComponentVisibility(local, b, c, c2, c3, c4, d, d2) {
       this.showFlightSquareLocal = local;
       this.showFlightSquareB = b;
       this.showFlightSquareC = c;
@@ -1240,10 +1317,9 @@ export default {
       this.showFlightSquareC3 = c3;
       this.showFlightSquareC4 = c4;
       this.showFlightSquareD = d;
+      this.showFlightSquareD2 = d2; // Dodajte kontrolu vidljivosti FlightD2
     },
-    submitPayment() {
-      // Payment submission logic here
-    },
+
     selectOrigin(airport) {
       this.selectedOrigin = airport;
       this.selectedDestination = null;
@@ -1306,29 +1382,54 @@ export default {
       });
       // Implement logic for confirmation
     },
-    formatCardNumber() {
-      // Uklanjamo sve nebrojčane znakove i dodajemo razmake nakon svake 4 znamenke
-      this.creditCardNumber = this.creditCardNumber
-        .replace(/\D/g, "")
-        .slice(0, 16);
-      this.formattedCardNumber = this.creditCardNumber
-        .replace(/(.{4})/g, "$1 ")
-        .trim();
+    formatCardNumber(event) {
+      const input = event.target.value.replace(/\D/g, "").slice(0, 16);
+      this.formattedCardNumber = input.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
     },
-    formatExpirationDate() {
-      // Uklanjamo sve nebrojčane znakove i formatiramo kao MM/YY
-      const cleaned = this.expirationDate.replace(/\D/g, "").slice(0, 4);
-      if (cleaned.length > 2) {
-        this.formattedExpirationDate = `${cleaned.slice(0, 2)}/${cleaned.slice(
-          2
-        )}`;
-      } else {
-        this.formattedExpirationDate = cleaned;
+    validateAndFormatExpirationDate(event) {
+      let input = event.target.value.replace(/[^0-9]/g, ""); // Ukloni sve osim brojeva
+
+      if (input.length > 4) {
+        input = input.slice(0, 4); // Ograniči na maksimalno 4 cifre (MMYY)
       }
+
+      // Odvojite mesec i godinu
+      const month = input.slice(0, 2);
+      const year = input.slice(2, 4);
+
+      // Proverite validnost meseca (01-12)
+      if (month && (parseInt(month, 10) < 1 || parseInt(month, 10) > 12)) {
+        return; // Ignoriši nevalidan unos
+      }
+
+      // Formatirajte rezultat u obliku MM/YY
+      const formatted = month.length === 2 ? `${month}/${year}` : month;
+
+      // Ažurirajte vrednost u `v-model`
+      this.formattedExpirationDate = formatted;
     },
-    validateCVV() {
-      // Ograničavamo unos na 3 broja
-      this.cvv = this.cvv.replace(/\D/g, "").slice(0, 3);
+
+    validateCVV(event) {
+      this.cvv = event.target.value.replace(/\D/g, "").slice(0, 3);
+    },
+    submitPayment() {
+      // Validacija forme ako je potrebno
+      if (!this.canSubmit) {
+        alert("Please fill in all required fields correctly.");
+        return;
+      }
+
+      // Ažuriranje stanja vidljivosti prozora
+      this.updateComponentVisibility(
+        false, // FlightSquare
+        false, // FlightB
+        false, // FlightC
+        false, // FlightC2
+        false, // FlightC3
+        false, // FlightC4
+        false, // FlightD
+        true // FlightD2
+      );
     },
   },
   watch: {
