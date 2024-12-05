@@ -760,37 +760,18 @@
         />
       </div>
       <div class="text-container">
-        <div class="text-content">
-          <h1>Personal and Payment Information</h1>
-
-          <!-- Display Price -->
-          <div class="purple-squareB mt-4">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
-          </div>
-          <!--  Car Price  -->
-          <div
-            class="special-purple-square"
-            v-if="totalCarRentalPrice !== null"
-          >
-            <span>Car Price: {{ totalCarRentalPrice }}€</span>
-          </div>
-          <!-- Shuttle Bus Price -->
-          <div class="special-purple-square">
-            <span>Bus Price: {{ shuttleBusPrice }}€</span>
+        <div class="flight-square" v-if="showFlightSquareD2">
+          <div class="text-container">
+            <h1>Your Tickets Are Ready</h1>
+            <button class="generate-button" @click="generatePDF">
+              Download Tickets
+            </button>
           </div>
         </div>
       </div>
       <!-- Submit Button -->
       <div class="button-container mt-4">
-        <button class="back-button" @click="goBackC">Back</button>
-        <button
-          class="next-button"
-          :class="{ disabled: !canSubmit }"
-          :disabled="!canSubmit"
-          @click="submitPayment"
-        >
-          Submit
-        </button>
+        <button class="back-button" @click="closeAllFlights">Close</button>
       </div>
     </div>
   </div>
@@ -799,6 +780,8 @@
 <script>
 import { nextTick } from "vue";
 import { TempusDominus } from "@eonasdan/tempus-dominus";
+import jsPDF from "jspdf";
+import JsBarcode from "jsbarcode";
 
 export default {
   props: {
@@ -935,6 +918,27 @@ export default {
           description: "MAX 32 KG, 81 x 119 x 171 cm",
         },
       ],
+      ticketDetails: {
+        origin: "Zagreb (ZAG)",
+        destination: "London Luton (LTN)",
+        ticketType: "Return",
+        departureDate: "2024-12-15",
+        returnDate: "2024-12-20",
+        passengers: [
+          {
+            name: "John Doe",
+            nationality: "US",
+            passport: "A12345678",
+            seq: "001",
+          },
+          {
+            name: "Jane Smith",
+            nationality: "US",
+            passport: "B87654321",
+            seq: "002",
+          },
+        ],
+      },
     };
   },
   computed: {
@@ -1319,6 +1323,16 @@ export default {
       this.showFlightSquareD = d;
       this.showFlightSquareD2 = d2; // Dodajte kontrolu vidljivosti FlightD2
     },
+    closeAllFlights() {
+      this.showFlightSquare = false;
+      this.showFlightSquareB = false;
+      this.showFlightSquareC = false;
+      this.showFlightSquareC2 = false;
+      this.showFlightSquareC3 = false;
+      this.showFlightSquareC4 = false;
+      this.showFlightSquareD = false;
+      this.showFlightSquareD2 = false;
+    },
 
     selectOrigin(airport) {
       this.selectedOrigin = airport;
@@ -1430,6 +1444,62 @@ export default {
         false, // FlightD
         true // FlightD2
       );
+    },
+    generateBarcode(text) {
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, text, { format: "CODE128", displayValue: false });
+      return canvas.toDataURL("image/png");
+    },
+    generatePDF() {
+      const {
+        origin,
+        destination,
+        ticketType,
+        departureDate,
+        returnDate,
+        passengers,
+      } = this.ticketDetails;
+      const doc = new jsPDF();
+
+      // Load the FamilyWings image
+      const logoImage = new Image();
+      logoImage.src = require("@/assets/Naslov4.png"); // Adjust path if needed
+
+      passengers.forEach((passenger, index) => {
+        if (index > 0) doc.addPage();
+
+        // Add FamilyWings logo at the top
+        doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
+
+        // Passenger Info
+        doc.setFontSize(12);
+        doc.text(`Passenger: ${passenger.name}`, 20, 50);
+        doc.text(`Nationality: ${passenger.nationality}`, 20, 60);
+        doc.text(`Passport: ${passenger.passport}`, 20, 70);
+        doc.text(`Seq No: ${passenger.seq}`, 20, 80);
+
+        // Flight Details
+        doc.text(`Origin: ${origin}`, 20, 100);
+        doc.text(`Destination: ${destination}`, 20, 110);
+        doc.text(`Ticket Type: ${ticketType}`, 20, 120);
+        doc.text(`Departure: ${departureDate}`, 20, 130);
+        if (ticketType === "Return") {
+          doc.text(`Return: ${returnDate}`, 20, 140);
+        }
+
+        // Barcode
+        const barcodeText = `${origin}-${destination}-${passenger.seq}`;
+        const barcodeImage = this.generateBarcode(barcodeText);
+        doc.addImage(barcodeImage, "PNG", 20, 160, 160, 40);
+
+        // Footer
+        doc.text("Thank you for choosing FamilyWings!", 105, 280, {
+          align: "center",
+        });
+      });
+
+      // Save PDF
+      doc.save("familywings_tickets.pdf");
     },
   },
   watch: {
@@ -1974,6 +2044,19 @@ export default {
   text-align: center; /* Centriraj tekst unutar unosa */
   width: 100%; /* Popuni prostor */
   max-width: 300px; /* Maksimalna širina */
+}
+.generate-button {
+  background-color: #9400d3;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.generate-button:hover {
+  background-color: #8000b3;
 }
 
 /* FlightD CSS */
