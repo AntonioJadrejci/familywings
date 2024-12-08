@@ -760,16 +760,28 @@
         />
       </div>
       <div class="text-container">
-        <div class="flight-square" v-if="showFlightSquareD2">
-          <div class="text-container">
-            <h1>Your Tickets Are Ready</h1>
-            <button class="generate-button" @click="generatePDF">
-              Download Tickets
-            </button>
-          </div>
-        </div>
+        <h1>Your Tickets Are Ready</h1>
+        <!-- Flight Ticket Download Button -->
+        <button class="generate-button" @click="generatePDF">
+          Download Flight Tickets
+        </button>
+        <!-- Rent-a-Car Ticket Download Button -->
+        <button
+          class="generate-button"
+          v-if="rentACarConfirmed"
+          @click="generateRentACarPDF"
+        >
+          Download Rent a Car Ticket
+        </button>
+        <!-- Shuttle Bus Ticket Download Button -->
+        <button
+          class="generate-button"
+          v-if="shuttleBusConfirmed"
+          @click="generateShuttleBusPDF"
+        >
+          Download Shuttle Bus Ticket
+        </button>
       </div>
-      <!-- Submit Button -->
       <div class="button-container mt-4">
         <button class="back-button" @click="closeAllFlights">Close</button>
       </div>
@@ -819,6 +831,9 @@ export default {
       selectedTicketType: "one-way", // Podrazumevano, samo jedan smer
       ticketPrice: 5,
       ticketCount: 0,
+
+      rentACarConfirmed: false, // Praćenje da li je potvrđen Rent-a-Car
+      shuttleBusConfirmed: false, // Praćenje da li je potvrđen Shuttle Bus
 
       additionalCosts: 0, // Dodatni troškovi za prtljag, shuttle itd.
       firstName: "", // Dodato
@@ -1010,13 +1025,12 @@ export default {
     },
   },
   watch: {
-    showFlightSquare(newVal) {
-      this.showFlightSquareLocal = newVal;
+    showFlightSquare(newValue) {
+      this.showFlightSquareLocal = newValue;
     },
-    showFlightSquareLocal(newVal) {
-      if (newVal) {
-        this.initDatePickers();
-      }
+    showFlightSquareLocal(newValue) {
+      // Emit to parent if local value changes
+      this.$emit("update:showFlightSquare", newValue);
     },
   },
   mounted() {
@@ -1324,7 +1338,8 @@ export default {
       this.showFlightSquareD2 = d2; // Dodajte kontrolu vidljivosti FlightD2
     },
     closeAllFlights() {
-      this.showFlightSquare = false;
+      // Reset all visibility states
+      this.showFlightSquareLocal = false; // Use the local data property
       this.showFlightSquareB = false;
       this.showFlightSquareC = false;
       this.showFlightSquareC2 = false;
@@ -1332,6 +1347,9 @@ export default {
       this.showFlightSquareC4 = false;
       this.showFlightSquareD = false;
       this.showFlightSquareD2 = false;
+
+      // Emit event to notify the parent
+      this.$emit("close");
     },
 
     selectOrigin(airport) {
@@ -1452,54 +1470,138 @@ export default {
     },
     generatePDF() {
       const {
-        origin,
-        destination,
-        ticketType,
-        departureDate,
-        returnDate,
-        passengers,
-      } = this.ticketDetails;
+        selectedOrigin,
+        selectedDestination,
+        selectedTicketType,
+        departureDateFlight,
+        returnDateFlight,
+        numberOfPassengers,
+        firstName,
+        lastName,
+      } = this;
+
       const doc = new jsPDF();
 
-      // Load the FamilyWings image
+      // Load the FamilyWings logo
       const logoImage = new Image();
-      logoImage.src = require("@/assets/Naslov4.png"); // Adjust path if needed
+      logoImage.src = require("@/assets/Naslov4.png"); // Adjust the path if needed
 
-      passengers.forEach((passenger, index) => {
-        if (index > 0) doc.addPage();
+      for (let i = 0; i < numberOfPassengers; i++) {
+        if (i > 0) doc.addPage();
 
         // Add FamilyWings logo at the top
         doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
 
         // Passenger Info
         doc.setFontSize(12);
-        doc.text(`Passenger: ${passenger.name}`, 20, 50);
-        doc.text(`Nationality: ${passenger.nationality}`, 20, 60);
-        doc.text(`Passport: ${passenger.passport}`, 20, 70);
-        doc.text(`Seq No: ${passenger.seq}`, 20, 80);
+        doc.text(`Passenger: ${firstName} ${lastName}`, 20, 50);
 
         // Flight Details
-        doc.text(`Origin: ${origin}`, 20, 100);
-        doc.text(`Destination: ${destination}`, 20, 110);
-        doc.text(`Ticket Type: ${ticketType}`, 20, 120);
-        doc.text(`Departure: ${departureDate}`, 20, 130);
-        if (ticketType === "Return") {
-          doc.text(`Return: ${returnDate}`, 20, 140);
+        doc.text(
+          `Origin: ${selectedOrigin ? selectedOrigin.name : "Not Selected"} (${
+            selectedOrigin ? selectedOrigin.code : "N/A"
+          })`,
+          20,
+          70
+        );
+        doc.text(
+          `Destination: ${
+            selectedDestination ? selectedDestination.name : "Not Selected"
+          } (${selectedDestination ? selectedDestination.code : "N/A"})`,
+          20,
+          80
+        );
+        doc.text(`Ticket Type: ${selectedTicketType}`, 20, 90);
+        doc.text(`Departure: ${departureDateFlight}`, 20, 100);
+        if (selectedTicketType === "return") {
+          doc.text(`Return: ${returnDateFlight}`, 20, 110);
         }
 
         // Barcode
-        const barcodeText = `${origin}-${destination}-${passenger.seq}`;
+        const barcodeText = `${selectedOrigin?.code || "N/A"}-${
+          selectedDestination?.code || "N/A"
+        }-P${i + 1}`;
         const barcodeImage = this.generateBarcode(barcodeText);
-        doc.addImage(barcodeImage, "PNG", 20, 160, 160, 40);
+        doc.addImage(barcodeImage, "PNG", 20, 130, 160, 40);
 
         // Footer
         doc.text("Thank you for choosing FamilyWings!", 105, 280, {
           align: "center",
         });
+      }
+
+      // Save the PDF
+      doc.save("familywings_tickets.pdf");
+    },
+    // Rent-a-Car PDF Generation
+    generateRentACarPDF() {
+      const doc = new jsPDF();
+      const logoImage = new Image();
+      logoImage.src = require("@/assets/Naslov4.png");
+
+      doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
+
+      doc.setFontSize(12);
+      doc.text(`Rent-a-Car Ticket`, 20, 50);
+      doc.text(`Airport: ${this.selectedAirportC3 || "N/A"}`, 20, 70);
+      doc.text(`Pickup Date: ${this.pickupDateC3 || "N/A"}`, 20, 80);
+      doc.text(`Return Date: ${this.returnDateC3 || "N/A"}`, 20, 90);
+      doc.text(`Car Type: ${this.selectedCar?.name || "N/A"}`, 20, 100);
+      doc.text(`Total Price: ${this.totalCarRentalPrice || "N/A"}€`, 20, 110);
+
+      const barcodeImage = this.generateBarcode("RENTACAR-TICKET");
+      doc.addImage(barcodeImage, "PNG", 20, 130, 160, 40);
+
+      doc.text("Thank you for choosing FamilyWings Rent-a-Car!", 105, 280, {
+        align: "center",
       });
 
-      // Save PDF
-      doc.save("familywings_tickets.pdf");
+      doc.save("rent_a_car_ticket.pdf");
+    },
+
+    // Shuttle Bus PDF Generation
+    generateShuttleBusPDF() {
+      const doc = new jsPDF();
+      const logoImage = new Image();
+      logoImage.src = require("@/assets/Naslov4.png");
+
+      for (let i = 0; i < this.ticketCount; i++) {
+        if (i > 0) doc.addPage();
+
+        doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
+        doc.setFontSize(12);
+        doc.text(`Shuttle Bus Ticket`, 20, 50);
+        doc.text(`Airport: ${this.selectedAirportC4 || "N/A"}`, 20, 70);
+        doc.text(`Pickup Date: ${this.shuttlePickupDate || "N/A"}`, 20, 80);
+        doc.text(`Ticket Number: ${i + 1}`, 20, 90);
+        doc.text(`Price: ${this.ticketPrice}€`, 20, 100);
+
+        const barcodeImage = this.generateBarcode(`SHUTTLE-TICKET-${i + 1}`);
+        doc.addImage(barcodeImage, "PNG", 20, 130, 160, 40);
+
+        doc.text(
+          "Thank you for choosing FamilyWings Shuttle Bus Service!",
+          105,
+          280,
+          {
+            align: "center",
+          }
+        );
+      }
+
+      doc.save("shuttle_bus_ticket.pdf");
+    },
+
+    // Tracking Rent-a-Car and Shuttle Bus Confirmation
+    confirmRentACar() {
+      this.rentACarConfirmed = true;
+      this.shuttleBusConfirmed = false;
+      this.showFlightD2Component(); // Idi na FlightD2 Square
+    },
+    confirmShuttleBus() {
+      this.shuttleBusConfirmed = true;
+      this.rentACarConfirmed = false;
+      this.showFlightD2Component(); // Idi na FlightD2 Square
     },
   },
   watch: {
