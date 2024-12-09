@@ -744,7 +744,7 @@
       </div>
     </div>
 
-    <!-- FlightD2 Square -->
+    <!-- FlightD2 Square --><!-- FlightD2 Square -->
     <div class="flight-square" v-if="showFlightSquareD2">
       <div class="image-container">
         <img
@@ -761,26 +761,28 @@
       </div>
       <div class="text-container">
         <h1>Your Tickets Are Ready</h1>
+        <!-- Smiley Image -->
+        <img src="@/assets/Smiley.png" alt="Smiley" class="smiley-image" />
         <!-- Flight Ticket Download Button -->
-        <button class="generate-button" @click="generatePDF">
-          Download Flight Tickets
-        </button>
-        <!-- Rent-a-Car Ticket Download Button -->
-        <button
-          class="generate-button"
-          v-if="totalCarRentalPrice > 0"
-          @click="generateRentACarPDF"
-        >
-          Download Rent a Car Ticket
-        </button>
-        <!-- Shuttle Bus Ticket Download Button -->
-        <button
-          class="generate-button"
-          v-if="shuttleBusPrice > 0"
-          @click="generateShuttleBusPDF"
-        >
-          Download Shuttle Bus Ticket
-        </button>
+        <div class="d-grid gap-3 mt-4">
+          <button class="btn btn-success" @click="generatePDF">
+            Download Flight Tickets
+          </button>
+          <button
+            class="btn btn-success"
+            v-if="totalCarRentalPrice > 0"
+            @click="generateRentACarPDF"
+          >
+            Download Rent a Car Ticket
+          </button>
+          <button
+            class="btn btn-success"
+            v-if="shuttleBusPrice > 0"
+            @click="generateShuttleBusPDF"
+          >
+            Download Shuttle Bus Ticket
+          </button>
+        </div>
       </div>
       <div class="button-container mt-4">
         <button class="back-button" @click="closeAllFlights">Close</button>
@@ -2159,6 +2161,12 @@ export default {
 
 .generate-button:hover {
   background-color: #8000b3;
+}
+
+.smiley-image {
+  width: 300px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 /* FlightD CSS */

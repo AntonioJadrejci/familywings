@@ -1,6 +1,7 @@
 <template>
   <div class="home-background">
     <div class="squares-container">
+      <!-- Flight Section -->
       <div
         class="square"
         @mouseover="scaleUp"
@@ -16,27 +17,54 @@
         @close="toggleFlightSquare"
       ></Flight>
 
-      <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
+      <!-- Rent a Car Section -->
+      <div
+        class="square"
+        @mouseover="scaleUp"
+        @mouseout="scaleDown"
+        @click="toggleRentACarSquare"
+      >
         <img src="@/assets/RentaCar.jpg" alt="Image 1" class="square-image" />
         <button class="square-button">Rent a Car</button>
       </div>
-      <div class="square" @mouseover="scaleUp" @mouseout="scaleDown">
+      <RentACar
+        v-if="showRentACarSquareFlag"
+        ref="rentACarComponent"
+        @goBack="toggleRentACarSquare"
+      ></RentACar>
+
+      <!-- Shuttle Bus Section -->
+      <div
+        class="square"
+        @mouseover="scaleUp"
+        @mouseout="scaleDown"
+        @click="toggleShuttleBusSquare"
+      >
         <img src="@/assets/ShuttleBus.jpg" alt="Image 1" class="square-image" />
         <button class="square-button">Shuttle Bus</button>
       </div>
+      <ShuttleBus
+        v-if="showShuttleBusSquareFlag"
+        ref="shuttleBusComponent"
+        @goBack="toggleShuttleBusSquare"
+      ></ShuttleBus>
     </div>
   </div>
 </template>
 
 <script>
 import Flight from "@/components/Flight.vue";
+import RentACar from "@/components/RentACar.vue";
+import ShuttleBus from "@/components/ShuttleBus.vue";
 
 export default {
   name: "HomeView",
-  components: { Flight },
+  components: { Flight, RentACar, ShuttleBus },
   data() {
     return {
       showFlightSquareFlag: false,
+      showRentACarSquareFlag: false,
+      showShuttleBusSquareFlag: false,
     };
   },
   methods: {
@@ -48,6 +76,12 @@ export default {
     },
     toggleFlightSquare() {
       this.showFlightSquareFlag = !this.showFlightSquareFlag;
+    },
+    toggleRentACarSquare() {
+      this.showRentACarSquareFlag = !this.showRentACarSquareFlag;
+    },
+    toggleShuttleBusSquare() {
+      this.showShuttleBusSquareFlag = !this.showShuttleBusSquareFlag;
     },
   },
 };
