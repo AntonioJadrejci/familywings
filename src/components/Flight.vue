@@ -768,7 +768,7 @@
         <!-- Rent-a-Car Ticket Download Button -->
         <button
           class="generate-button"
-          v-if="rentACarConfirmed"
+          v-if="totalCarRentalPrice > 0"
           @click="generateRentACarPDF"
         >
           Download Rent a Car Ticket
@@ -776,7 +776,7 @@
         <!-- Shuttle Bus Ticket Download Button -->
         <button
           class="generate-button"
-          v-if="shuttleBusConfirmed"
+          v-if="shuttleBusPrice > 0"
           @click="generateShuttleBusPDF"
         >
           Download Shuttle Bus Ticket
