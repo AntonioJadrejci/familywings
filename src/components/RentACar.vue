@@ -97,9 +97,174 @@
           class="next-button"
           :class="{ disabled: !canConfirm }"
           :disabled="!canConfirm"
-          @click="confirmRentACar"
+          @click="confirmAndShowFlightD"
         >
           Confirm
+        </button>
+      </div>
+    </div>
+    <!-- FlightD Square -->
+    <div class="flight-square" v-if="showFlightSquareD">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <div class="text-content">
+          <h1>Personal and Payment Information</h1>
+
+          <!-- Personal Information Section -->
+          <div class="mt-4">
+            <h3 class="mb-3">Personal Information</h3>
+            <div class="row g-3">
+              <!-- First Name -->
+              <div class="col-md-6">
+                <label for="firstName" class="form-label">First Name</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  class="form-control"
+                  v-model="firstName"
+                  placeholder="Enter your first name"
+                  required
+                />
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-md-6">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  class="form-control"
+                  v-model="lastName"
+                  placeholder="Enter your last name"
+                  required
+                />
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-6">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input
+                  type="date"
+                  id="dob"
+                  class="form-control"
+                  v-model="dateOfBirth"
+                  :max="getDynamicMinDate()"
+                  required
+                />
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-control"
+                  v-model="email"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <!-- Phone Number -->
+              <div class="col-md-12">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  class="form-control"
+                  v-model="phoneNumber"
+                  placeholder="Enter your phone number"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Information Section -->
+          <div class="mt-5">
+            <h3 class="mb-3">Payment Information</h3>
+
+            <!-- Credit Card Number -->
+            <div class="form-group mb-3">
+              <label for="credit-card" class="form-label"
+                >Credit Card Number</label
+              >
+              <input
+                type="text"
+                id="credit-card"
+                class="form-control"
+                v-model="formattedCardNumber"
+                @input="formatCardNumber"
+                placeholder="XXXX XXXX XXXX XXXX"
+                maxlength="19"
+              />
+            </div>
+
+            <!-- Expiration Date -->
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="expiration-date" class="form-label"
+                  >Expiration Date</label
+                >
+                <input
+                  type="text"
+                  id="expiration-date"
+                  class="form-control"
+                  v-model="formattedExpirationDate"
+                  @input="validateAndFormatExpirationDate"
+                  placeholder="MM/YY"
+                  maxlength="5"
+                />
+              </div>
+
+              <!-- CVV -->
+              <div class="col-md-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input
+                  type="text"
+                  id="cvv"
+                  class="form-control"
+                  v-model="cvv"
+                  @input="validateCVV"
+                  placeholder="XXX"
+                  maxlength="3"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!--  Car Price  -->
+          <div
+            class="special-purple-square"
+            v-if="totalCarRentalPrice !== null"
+          >
+            <span>Car Price: {{ totalCarRentalPrice }}€</span>
+          </div>
+        </div>
+      </div>
+      <!-- Submit Button -->
+      <div class="button-container mt-4">
+        <button class="back-button" @click="goBackToRentACar">Back</button>
+        <button
+          class="next-button"
+          :class="{ disabled: !canSubmit }"
+          :disabled="!canSubmit"
+          @click="showFlightD2Component"
+        >
+          Submit
         </button>
       </div>
     </div>
@@ -111,11 +276,20 @@ export default {
   data() {
     return {
       showRentACarSquare: true,
+      showFlightSquareD: false,
       selectedAirportC3: null,
       pickupDateC3: "",
       returnDateC3: "",
       selectedCar: null,
       totalCarRentalPrice: null,
+      firstName: "", // Added
+      lastName: "", // Added
+      dateOfBirth: "", // Added
+      email: "", // Added
+      phoneNumber: "", // Added
+      formattedCardNumber: "", // Added
+      formattedExpirationDate: "", // Added
+      cvv: "", // Added
       cars: [
         {
           name: "Opel Zafira",
@@ -167,6 +341,16 @@ export default {
         this.selectedCar
       );
     },
+    canSubmit() {
+      return (
+        this.firstName &&
+        this.lastName &&
+        this.email &&
+        this.formattedCardNumber.replace(/\s/g, "").length === 16 &&
+        this.formattedExpirationDate.length === 5 &&
+        this.cvv.length === 3
+      );
+    },
   },
   methods: {
     getDynamicMinDate() {
@@ -188,13 +372,47 @@ export default {
         this.totalCarRentalPrice = null;
       }
     },
-    confirmRentACar() {
-      alert("Rent-a-Car confirmed!");
-      // Add navigation logic or further actions here
+    confirmAndShowFlightD() {
+      this.showRentACarSquare = false;
+      this.showFlightSquareD = true;
+    },
+    goBackToRentACar() {
+      this.showFlightSquareD = false;
+      this.showRentACarSquare = true;
     },
     goBackToMain() {
       this.$emit("goBack");
     },
+  },
+  formatCardNumber(event) {
+    const input = event.target.value.replace(/\D/g, "").slice(0, 16);
+    this.formattedCardNumber = input.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+  },
+  validateAndFormatExpirationDate(event) {
+    let input = event.target.value.replace(/[^0-9]/g, ""); // Ukloni sve osim brojeva
+
+    if (input.length > 4) {
+      input = input.slice(0, 4); // Ograniči na maksimalno 4 cifre (MMYY)
+    }
+
+    // Odvojite mesec i godinu
+    const month = input.slice(0, 2);
+    const year = input.slice(2, 4);
+
+    // Proverite validnost meseca (01-12)
+    if (month && (parseInt(month, 10) < 1 || parseInt(month, 10) > 12)) {
+      return; // Ignoriši nevalidan unos
+    }
+
+    // Formatirajte rezultat u obliku MM/YY
+    const formatted = month.length === 2 ? `${month}/${year}` : month;
+
+    // Ažurirajte vrednost u `v-model`
+    this.formattedExpirationDate = formatted;
+  },
+
+  validateCVV(event) {
+    this.cvv = event.target.value.replace(/\D/g, "").slice(0, 3);
   },
 };
 </script>
