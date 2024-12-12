@@ -42,12 +42,12 @@
 
         <!-- Pickup Date -->
         <div class="form-group">
-          <label for="pickupDate" class="form-label">Pickup Date:</label>
+          <label for="shuttlePickupDate" class="form-label">Pickup Date:</label>
           <input
-            id="pickupDate"
+            id="shuttlePickupDate"
             type="date"
             class="form-control"
-            v-model="pickupDate"
+            v-model="shuttlePickupDate"
             :min="getDynamicMinDate()"
           />
         </div>
@@ -80,7 +80,7 @@
           class="next-button"
           :disabled="!isFormValid"
           :class="{ disabled: !isFormValid }"
-          @click="confirmShuttleBus"
+          @click="confirmAndShowFlightD"
         >
           Confirm
         </button>
@@ -206,11 +206,15 @@
                   type="text"
                   id="expiration-date"
                   class="form-control"
-                  v-model="formattedExpirationDate"
-                  @input="validateAndFormatExpirationDate"
+                  v-model="expirationDateInput"
+                  @input="onExpirationDateInput"
                   placeholder="MM/YY"
                   maxlength="5"
+                  autocomplete="off"
                 />
+                <p v-if="expirationDateError" class="text-danger">
+                  {{ expirationDateError }}
+                </p>
               </div>
 
               <!-- CVV -->
@@ -229,17 +233,6 @@
             </div>
           </div>
 
-          <!-- Display Price -->
-          <div class="purple-squareB mt-4">
-            <div class="half-text">Flight Price: {{ finalPrice }}€</div>
-          </div>
-          <!--  Car Price  -->
-          <div
-            class="special-purple-square"
-            v-if="totalCarRentalPrice !== null"
-          >
-            <span>Car Price: {{ totalCarRentalPrice }}€</span>
-          </div>
           <!-- Shuttle Bus Price -->
           <div class="special-purple-square">
             <span>Bus Price: {{ shuttleBusPrice }}€</span>
@@ -248,7 +241,7 @@
       </div>
       <!-- Submit Button -->
       <div class="button-container mt-4">
-        <button class="back-button" @click="goBackC">Back</button>
+        <button class="back-button" @click="goBackToShuttleBus">Back</button>
         <button
           class="next-button"
           :class="{ disabled: !canSubmit }"
@@ -259,20 +252,71 @@
         </button>
       </div>
     </div>
+    <!-- FlightD2 Square --><!-- FlightD2 Square -->
+    <div class="flight-square" v-if="showFlightSquareD2">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <h1>Your Tickets Are Ready</h1>
+        <!-- Smiley Image -->
+        <img src="@/assets/Smiley.png" alt="Smiley" class="smiley-image" />
+        <!-- Flight Ticket Download Button -->
+        <div class="d-grid gap-3 mt-4">
+          <button
+            class="btn btn-success"
+            v-if="shuttleBusPrice > 0"
+            @click="generateShuttleBusPDF"
+          >
+            Download Shuttle Bus Ticket
+          </button>
+        </div>
+      </div>
+      <div class="button-container mt-4">
+        <button class="back-button" @click="closeShuttleBus">Close</button>
+      </div>
+    </div>
   </div>
 </template>
 
 
 <script>
+import { nextTick } from "vue";
+import { TempusDominus } from "@eonasdan/tempus-dominus";
+import jsPDF from "jspdf";
+import JsBarcode from "jsbarcode";
 export default {
   data() {
     return {
       showShuttleBusSquare: true,
+      showFlightSquareD: false,
+      showFlightSquareD2: false,
       selectedAirportC4: null,
       pickupDate: "",
       ticketCount: 0,
       shuttleBusPrice: 0,
+      shuttlePickupDate: "",
       ticketPrice: 5,
+      firstName: "", // Added
+      lastName: "", // Added
+      dateOfBirth: "", // Added
+      email: "", // Added
+      phoneNumber: "", // Added
+      formattedCardNumber: "", // Added
+      formattedExpirationDate: "", // Added
+      expirationDateInput: "", // Vrijednost unosa (raw)
+      expirationDateError: "", // Poruka greške
+      cvv: "", // Added
       airports: [
         { name: "Zagreb", code: "ZAG" },
         { name: "Paris", code: "CDG" },
@@ -294,7 +338,26 @@ export default {
   },
   computed: {
     isFormValid() {
-      return this.selectedAirportC4 && this.pickupDate && this.ticketCount > 0;
+      return (
+        this.selectedAirportC4 && this.shuttlePickupDate && this.ticketCount > 0
+      );
+    },
+    canSubmit() {
+      const isValidCardNumber =
+        this.formattedCardNumber.replace(/\s/g, "").length === 16;
+      const isValidExpirationDate =
+        this.expirationDateInput.length === 5 && !this.expirationDateError;
+      const isValidCVV = this.cvv.length === 3;
+
+      return (
+        this.firstName &&
+        this.lastName &&
+        this.email &&
+        this.phoneNumber &&
+        isValidCardNumber &&
+        isValidExpirationDate &&
+        isValidCVV
+      );
     },
   },
   watch: {
@@ -313,6 +376,145 @@ export default {
     },
     goBackToMain() {
       this.$emit("goBack");
+    },
+    goBackToShuttleBus() {
+      this.showFlightSquareD = false;
+      this.showShuttleBusSquare = true;
+      this.showFlightSquareD2 = false;
+    },
+    confirmAndShowFlightD() {
+      this.showRentACarSquare = false;
+      this.showFlightSquareD = true;
+    },
+    showFlightD2Component() {
+      this.showRentACarSquare = false;
+      this.showFlightSquareD = false;
+      this.showFlightSquareD2 = true;
+    },
+    closeShuttleBus() {
+      this.$emit("goBack");
+      this.showRentACarSquare = false;
+      this.showFlightSquareD = false;
+      this.showFlightSquareD2 = false;
+    },
+    formatCardNumber(event) {
+      const input = event.target.value.replace(/\D/g, "");
+      this.formattedCardNumber = input.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+    },
+    validateAndFormatExpirationDate(event) {
+      let input = event.target.value.replace(/[^0-9]/g, ""); // Dozvoljava samo brojeve
+
+      // Maksimalna dužina unosa
+      if (input.length > 4) {
+        input = input.slice(0, 4);
+      }
+
+      let formatted = "";
+
+      // Validacija mjeseca
+      if (input.length >= 2) {
+        const month = input.slice(0, 2);
+        if (parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+          return; // Ne dozvoljava neispravne mjesece
+        }
+        formatted = month + "/";
+      }
+
+      // Validacija godine
+      if (input.length >= 3) {
+        const year = input.slice(2, 4);
+        const validYears = ["24", "25", "26", "27", "28"];
+        if (!validYears.includes(year)) {
+          return; // Ne dozvoljava neispravne godine
+        }
+        formatted += year;
+      }
+
+      this.formattedExpirationDate = formatted; // Ažuriraj vrijednost
+    },
+    onExpirationDateInput(event) {
+      const input = event.target.value.replace(/[^0-9/]/g, ""); // Dozvoljava samo brojeve i "/"
+      this.expirationDateError = ""; // Reset greške
+
+      // Ako nema "/", unesite ga nakon mjeseca
+      if (input.length === 2 && !input.includes("/")) {
+        this.expirationDateInput = input + "/";
+        return;
+      }
+
+      // Ako ima više od 5 znakova, ograničite na prvih 5
+      if (input.length > 5) {
+        this.expirationDateInput = input.slice(0, 5);
+        return;
+      }
+
+      // Provjerite validnost mjeseca i godine
+      if (input.length >= 2 && !input.includes("/")) {
+        const month = input.slice(0, 2);
+        if (parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+          this.expirationDateError =
+            "Invalid month. Enter a value between 01 and 12.";
+          return;
+        }
+      }
+
+      if (input.length === 5) {
+        const year = input.slice(3);
+        const validYears = ["24", "25", "26", "27", "28"];
+        if (!validYears.includes(year)) {
+          this.expirationDateError =
+            "Invalid year. Enter a value between 24 and 28.";
+          return;
+        }
+      }
+
+      // Postavite validirani unos
+      this.expirationDateInput = input;
+    },
+    // Shuttle Bus PDF Generation
+    generateShuttleBusPDF() {
+      const doc = new jsPDF();
+      const logoImage = new Image();
+      logoImage.src = require("@/assets/Naslov4.png");
+
+      // Pričekaj da se logo učita
+      logoImage.onload = () => {
+        for (let i = 0; i < this.ticketCount; i++) {
+          if (i > 0) doc.addPage();
+
+          doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
+          doc.setFontSize(12);
+          doc.text(`Shuttle Bus Ticket`, 20, 50);
+          doc.text(`Airport: ${this.selectedAirportC4 || "N/A"}`, 20, 70);
+          doc.text(`Pickup Date: ${this.shuttlePickupDate || "N/A"}`, 20, 80);
+          doc.text(`Ticket Number: ${i + 1}`, 20, 90);
+          doc.text(`Price: ${this.ticketPrice}€`, 20, 100);
+
+          const barcodeImage = this.generateBarcode(`SHUTTLE-TICKET-${i + 1}`);
+          doc.addImage(barcodeImage, "PNG", 20, 130, 160, 40);
+
+          doc.text(
+            "Thank you for choosing FamilyWings Shuttle Bus Service!",
+            105,
+            280,
+            {
+              align: "center",
+            }
+          );
+        }
+
+        doc.save("shuttle_bus_ticket.pdf");
+      };
+    },
+    confirmShuttleBus() {
+      this.shuttleBusConfirmed = true;
+      this.rentACarConfirmed = false;
+      this.showFlightD2Component(); // Idi na FlightD2 Square
+    },
+    generateBarcode(text) {
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, text, { format: "CODE128", displayValue: false });
+      return canvas.toDataURL("image/png");
     },
   },
 };
@@ -422,5 +624,30 @@ input {
 .next-button.disabled {
   background-color: #cccccc; /* Siva boja za disabled dugme */
   cursor: not-allowed;
+}
+.centered-date-input {
+  margin: 0 auto; /* Centriranje unosa */
+  text-align: center; /* Centriraj tekst unutar unosa */
+  width: 100%; /* Popuni prostor */
+  max-width: 300px; /* Maksimalna širina */
+}
+.generate-button {
+  background-color: #9400d3;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.generate-button:hover {
+  background-color: #8000b3;
+}
+
+.smiley-image {
+  width: 300px;
+  height: auto;
+  margin-bottom: 20px;
 }
 </style>

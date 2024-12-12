@@ -56,6 +56,8 @@
 import Flight from "@/components/Flight.vue";
 import RentACar from "@/components/RentACar.vue";
 import ShuttleBus from "@/components/ShuttleBus.vue";
+import Login from "@/components/Login.vue";
+import Register from "@/components/Register.vue";
 
 export default {
   name: "HomeView",

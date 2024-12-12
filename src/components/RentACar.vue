@@ -223,11 +223,15 @@
                   type="text"
                   id="expiration-date"
                   class="form-control"
-                  v-model="formattedExpirationDate"
-                  @input="validateAndFormatExpirationDate"
+                  v-model="expirationDateInput"
+                  @input="onExpirationDateInput"
                   placeholder="MM/YY"
                   maxlength="5"
+                  autocomplete="off"
                 />
+                <p v-if="expirationDateError" class="text-danger">
+                  {{ expirationDateError }}
+                </p>
               </div>
 
               <!-- CVV -->
@@ -262,21 +266,60 @@
           class="next-button"
           :class="{ disabled: !canSubmit }"
           :disabled="!canSubmit"
-          @click="showFlightD2Component"
+          @click="confirmAndShowFlightD2"
         >
           Submit
         </button>
+      </div>
+    </div>
+    <!-- FlightD2 Square --><!-- FlightD2 Square -->
+    <div class="flight-square" v-if="showFlightSquareD2">
+      <div class="image-container">
+        <img
+          src="@/assets/AboutPlane.png"
+          alt="Flight Image Left"
+          class="left-image"
+        />
+        <div class="space"></div>
+        <img
+          src="@/assets/AboutPlane0.png"
+          alt="Flight Image Right"
+          class="right-image"
+        />
+      </div>
+      <div class="text-container">
+        <h1>Your Ticket is Ready</h1>
+        <!-- Smiley Image -->
+        <img src="@/assets/Smiley.png" alt="Smiley" class="smiley-image" />
+        <!-- Flight Ticket Download Button -->
+        <div class="d-grid gap-3 mt-4">
+          <button
+            class="btn btn-success"
+            v-if="totalCarRentalPrice > 0"
+            @click="generateRentACarPDF"
+          >
+            Download Rent a Car Ticket
+          </button>
+        </div>
+      </div>
+      <div class="button-container mt-4">
+        <button class="back-button" @click="closeRentACar">Close</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { nextTick } from "vue";
+import { TempusDominus } from "@eonasdan/tempus-dominus";
+import jsPDF from "jspdf";
+import JsBarcode from "jsbarcode";
 export default {
   data() {
     return {
       showRentACarSquare: true,
       showFlightSquareD: false,
+      showFlightSquareD2: false,
       selectedAirportC3: null,
       pickupDateC3: "",
       returnDateC3: "",
@@ -289,6 +332,8 @@ export default {
       phoneNumber: "", // Added
       formattedCardNumber: "", // Added
       formattedExpirationDate: "", // Added
+      expirationDateInput: "", // Vrijednost unosa (raw)
+      expirationDateError: "", // Poruka greške
       cvv: "", // Added
       cars: [
         {
@@ -342,13 +387,20 @@ export default {
       );
     },
     canSubmit() {
+      const isValidCardNumber =
+        this.formattedCardNumber.replace(/\s/g, "").length === 16;
+      const isValidExpirationDate =
+        this.expirationDateInput.length === 5 && !this.expirationDateError;
+      const isValidCVV = this.cvv.length === 3;
+
       return (
         this.firstName &&
         this.lastName &&
         this.email &&
-        this.formattedCardNumber.replace(/\s/g, "").length === 16 &&
-        this.formattedExpirationDate.length === 5 &&
-        this.cvv.length === 3
+        this.phoneNumber &&
+        isValidCardNumber &&
+        isValidExpirationDate &&
+        isValidCVV
       );
     },
   },
@@ -376,43 +428,134 @@ export default {
       this.showRentACarSquare = false;
       this.showFlightSquareD = true;
     },
+    confirmAndShowFlightD2() {
+      this.showRentACarSquare = false;
+      this.showFlightSquareD = false;
+      this.showFlightSquareD2 = true;
+    },
     goBackToRentACar() {
       this.showFlightSquareD = false;
       this.showRentACarSquare = true;
+      this.showFlightSquareD2 = false;
     },
     goBackToMain() {
       this.$emit("goBack");
     },
-  },
-  formatCardNumber(event) {
-    const input = event.target.value.replace(/\D/g, "").slice(0, 16);
-    this.formattedCardNumber = input.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
-  },
-  validateAndFormatExpirationDate(event) {
-    let input = event.target.value.replace(/[^0-9]/g, ""); // Ukloni sve osim brojeva
+    closeRentACar() {
+      this.showFlightSquareD = false;
+      this.showRentACarSquare = false;
+      this.showFlightSquareD2 = false;
+    },
+    formatCardNumber(event) {
+      const input = event.target.value.replace(/\D/g, "");
+      this.formattedCardNumber = input.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
+    },
+    validateAndFormatExpirationDate(event) {
+      let input = event.target.value.replace(/[^0-9]/g, ""); // Dozvoljava samo brojeve
 
-    if (input.length > 4) {
-      input = input.slice(0, 4); // Ograniči na maksimalno 4 cifre (MMYY)
-    }
+      // Maksimalna dužina unosa
+      if (input.length > 4) {
+        input = input.slice(0, 4);
+      }
 
-    // Odvojite mesec i godinu
-    const month = input.slice(0, 2);
-    const year = input.slice(2, 4);
+      let formatted = "";
 
-    // Proverite validnost meseca (01-12)
-    if (month && (parseInt(month, 10) < 1 || parseInt(month, 10) > 12)) {
-      return; // Ignoriši nevalidan unos
-    }
+      // Validacija mjeseca
+      if (input.length >= 2) {
+        const month = input.slice(0, 2);
+        if (parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+          return; // Ne dozvoljava neispravne mjesece
+        }
+        formatted = month + "/";
+      }
 
-    // Formatirajte rezultat u obliku MM/YY
-    const formatted = month.length === 2 ? `${month}/${year}` : month;
+      // Validacija godine
+      if (input.length >= 3) {
+        const year = input.slice(2, 4);
+        const validYears = ["24", "25", "26", "27", "28"];
+        if (!validYears.includes(year)) {
+          return; // Ne dozvoljava neispravne godine
+        }
+        formatted += year;
+      }
 
-    // Ažurirajte vrednost u `v-model`
-    this.formattedExpirationDate = formatted;
-  },
+      this.formattedExpirationDate = formatted; // Ažuriraj vrijednost
+    },
+    onExpirationDateInput(event) {
+      const input = event.target.value.replace(/[^0-9/]/g, ""); // Dozvoljava samo brojeve i "/"
+      this.expirationDateError = ""; // Reset greške
 
-  validateCVV(event) {
-    this.cvv = event.target.value.replace(/\D/g, "").slice(0, 3);
+      // Ako nema "/", unesite ga nakon mjeseca
+      if (input.length === 2 && !input.includes("/")) {
+        this.expirationDateInput = input + "/";
+        return;
+      }
+
+      // Ako ima više od 5 znakova, ograničite na prvih 5
+      if (input.length > 5) {
+        this.expirationDateInput = input.slice(0, 5);
+        return;
+      }
+
+      // Provjerite validnost mjeseca i godine
+      if (input.length >= 2 && !input.includes("/")) {
+        const month = input.slice(0, 2);
+        if (parseInt(month, 10) < 1 || parseInt(month, 10) > 12) {
+          this.expirationDateError =
+            "Invalid month. Enter a value between 01 and 12.";
+          return;
+        }
+      }
+
+      if (input.length === 5) {
+        const year = input.slice(3);
+        const validYears = ["24", "25", "26", "27", "28"];
+        if (!validYears.includes(year)) {
+          this.expirationDateError =
+            "Invalid year. Enter a value between 24 and 28.";
+          return;
+        }
+      }
+
+      // Postavite validirani unos
+      this.expirationDateInput = input;
+    },
+    // Rent-a-Car PDF Generation
+    generateRentACarPDF() {
+      const doc = new jsPDF();
+      const logoImage = new Image();
+      logoImage.src = require("@/assets/Naslov4.png");
+
+      doc.addImage(logoImage, "PNG", 80, 10, 50, 20);
+
+      doc.setFontSize(12);
+      doc.text(`Rent-a-Car Ticket`, 20, 50);
+      doc.text(`Airport: ${this.selectedAirportC3 || "N/A"}`, 20, 70);
+      doc.text(`Pickup Date: ${this.pickupDateC3 || "N/A"}`, 20, 80);
+      doc.text(`Return Date: ${this.returnDateC3 || "N/A"}`, 20, 90);
+      doc.text(`Car Type: ${this.selectedCar?.name || "N/A"}`, 20, 100);
+      doc.text(`Total Price: ${this.totalCarRentalPrice || "N/A"}€`, 20, 110);
+
+      const barcodeImage = this.generateBarcode("RENTACAR-TICKET");
+      doc.addImage(barcodeImage, "PNG", 20, 130, 160, 40);
+
+      doc.text("Thank you for choosing FamilyWings Rent-a-Car!", 105, 280, {
+        align: "center",
+      });
+
+      doc.save("rent_a_car_ticket.pdf");
+    },
+    // Tracking Rent-a-Car and Shuttle Bus Confirmation
+    confirmRentACar() {
+      this.rentACarConfirmed = true;
+      this.shuttleBusConfirmed = false;
+      this.showFlightD2Component(); // Idi na FlightD2 Square
+    },
+    generateBarcode(text) {
+      const canvas = document.createElement("canvas");
+      JsBarcode(canvas, text, { format: "CODE128", displayValue: false });
+      return canvas.toDataURL("image/png");
+    },
   },
 };
 </script>
@@ -513,5 +656,35 @@ export default {
 
 .card-body {
   padding: 10px; /* Manji padding unutar kartice */
+}
+
+.next-button.disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.centered-date-input {
+  margin: 0 auto; /* Centriranje unosa */
+  text-align: center; /* Centriraj tekst unutar unosa */
+  width: 100%; /* Popuni prostor */
+  max-width: 300px; /* Maksimalna širina */
+}
+.generate-button {
+  background-color: #9400d3;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.generate-button:hover {
+  background-color: #8000b3;
+}
+
+.smiley-image {
+  width: 300px;
+  height: auto;
+  margin-bottom: 20px;
 }
 </style>
