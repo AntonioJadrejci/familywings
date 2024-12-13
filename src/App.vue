@@ -28,6 +28,9 @@
         <router-link to="/register" class="menu-link" @click="closeMenu"
           >Registration</router-link
         >
+        <router-link to="/profilepage" class="menu-link" @click="closeMenu"
+          >Profile</router-link
+        >
       </div>
     </div>
   </nav>
@@ -38,11 +41,13 @@
 import BackgroundContainer from "@/components/BackgroundContainer.vue";
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
+import ProfilePage from "@/components/ProfilePage.vue";
 export default {
   components: {
     BackgroundContainer,
     Login,
     Register,
+    ProfilePage,
   },
   data() {
     return {
