@@ -1,13 +1,14 @@
 <template>
   <nav class="navbar">
     <div class="container">
-      <router-link to="/" class="no-underline"
-        ><img
+      <router-link to="/" class="no-underline">
+        <img
           src="@/assets/Naslov4.png"
           alt="FamilyWings"
           class="router-link-image"
           @click="handleLinkClick"
-      /></router-link>
+        />
+      </router-link>
 
       <button class="menu-button" @click="toggleMenu">
         <font-awesome-icon icon="bars" class="menu-icon" />
@@ -22,15 +23,38 @@
         <router-link to="/about" class="menu-link" @click="closeMenu">
           About us
         </router-link>
-        <router-link to="/login" class="menu-link" @click="closeMenu"
-          >Login</router-link
+        <router-link
+          v-if="!isLoggedIn"
+          to="/login"
+          class="menu-link"
+          @click="closeMenu"
         >
-        <router-link to="/register" class="menu-link" @click="closeMenu"
-          >Registration</router-link
+          Login
+        </router-link>
+        <router-link
+          v-if="!isLoggedIn"
+          to="/register"
+          class="menu-link"
+          @click="closeMenu"
         >
-        <router-link to="/profilepage" class="menu-link" @click="closeMenu"
-          >Profile</router-link
+          Registration
+        </router-link>
+        <router-link
+          v-if="isLoggedIn"
+          to="/profilepage"
+          class="menu-link"
+          @click="closeMenu"
         >
+          Profile
+        </router-link>
+        <a
+          v-if="isLoggedIn"
+          href="#"
+          class="menu-link"
+          @click.prevent="handleLogout"
+        >
+          Logout
+        </a>
       </div>
     </div>
   </nav>
@@ -38,10 +62,15 @@
 </template>
 
 <script>
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, storage } from "@/firebase"; // Ensure Firebase is configured
+import { ref, getDownloadURL } from "firebase/storage";
+
 import BackgroundContainer from "@/components/BackgroundContainer.vue";
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";
 import ProfilePage from "@/components/ProfilePage.vue";
+
 export default {
   components: {
     BackgroundContainer,
@@ -52,30 +81,55 @@ export default {
   data() {
     return {
       isMenuOpen: false,
+      isLoggedIn: false,
+      profileImage: null,
     };
   },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
-
-      // Update body overflow style
       document.body.style.overflow = this.isMenuOpen ? "hidden" : "auto";
     },
     closeMenu() {
       this.isMenuOpen = false;
-      // Revert body overflow style when menu is closed
       document.body.style.overflow = "auto";
     },
+    handleLogout() {
+      signOut(auth)
+        .then(() => {
+          this.isLoggedIn = false;
+          this.$router.push("/login");
+        })
+        .catch((error) => {
+          console.error("Error logging out:", error);
+        });
+    },
+
     handleLinkClick() {
-      // Check if the current route is already the home page
       if (this.$route.path !== "/") {
-        // If not, navigate to the home page
         this.$router.push("/");
       } else {
-        // If already on the home page, force page refresh
         window.location.reload();
       }
     },
+    fetchProfileImage() {
+      const user = auth.currentUser;
+      if (user) {
+        const storageRef = ref(storage, `profileImages/${user.uid}`);
+        getDownloadURL(storageRef)
+          .then((url) => {
+            this.profileImage = url;
+          })
+          .catch(() => {
+            this.profileImage = null; // Use default image
+          });
+      }
+    },
+  },
+  mounted() {
+    onAuthStateChanged(auth, (user) => {
+      this.isLoggedIn = !!user;
+    });
   },
 };
 </script>
@@ -213,5 +267,13 @@ nav {
     margin-left: 0;
     margin-top: 10px;
   }
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
 }
 </style>

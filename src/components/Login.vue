@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 export default {
   data() {
     return {
@@ -66,12 +68,21 @@ export default {
     };
   },
   methods: {
-    handleLogin() {
-      if (this.email && this.password) {
-        alert(`Logged in with: ${this.email}`);
-        // Implement login logic here
-      } else {
-        alert("Please fill in all fields.");
+    async handleLogin() {
+      const auth = getAuth();
+      try {
+        await signInWithEmailAndPassword(auth, this.email, this.password);
+        alert("Login successful!");
+        this.$router.push("/profilepage");
+      } catch (error) {
+        if (
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found"
+        ) {
+          alert("Wrong email or password!");
+        } else {
+          console.error("Login error:", error.message);
+        }
       }
     },
     goToHomePage() {

@@ -15,42 +15,31 @@
         />
       </div>
       <div class="text-container">
-        <h1 class="login-title">Login</h1>
-        <form class="login-form">
-          <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              v-model="email"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              v-model="password"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="rememberMe" />
-            <label class="form-check-label" for="rememberMe">Remember me</label>
-          </div>
-          <button
-            type="submit"
-            class="btn btn-primary w-100"
-            @click.prevent="handleLogin"
-          >
-            Login
+        <div class="profile-header">
+          <h1>My Profile</h1>
+          <img
+            :src="profileImage || require('@/assets/EmptyProfile.png')"
+            alt="Profile"
+            class="profile-picture"
+          />
+          <input
+            type="file"
+            class="form-control mt-2"
+            @change="uploadProfileImage"
+          />
+          <h2>{{ username || "Anonymous User" }}</h2>
+        </div>
+        <div class="profile-buttons">
+          <button class="btn btn-primary" @click="viewPreviousFlights">
+            Previous Flights
           </button>
-        </form>
+          <button class="btn btn-primary" @click="viewPreviousRents">
+            Previous Rents
+          </button>
+          <button class="btn btn-primary" @click="viewPreviousShuttles">
+            Previous Shuttles
+          </button>
+        </div>
         <button class="back-button" @click="goToHomePage">Back</button>
       </div>
     </div>
@@ -58,21 +47,60 @@
 </template>
 
 <script>
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { auth, storage } from "@/firebase";
+
 export default {
   data() {
     return {
-      email: "",
-      password: "",
+      profileImage: null,
+      username: "Anonymous User", // Replace with actual user data
     };
   },
   methods: {
-    handleLogin() {
-      if (this.email && this.password) {
-        alert(`Logged in with: ${this.email}`);
-        // Implement login logic here
-      } else {
-        alert("Please fill in all fields.");
+    async uploadProfileImage(event) {
+      const file = event.target.files[0];
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged in to upload a profile image.");
+        return;
       }
+
+      const storageRef = ref(storage, `profileImages/${user.uid}`);
+      try {
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        this.profileImage = url;
+      } catch (error) {
+        console.error("Error uploading profile image:", error);
+      }
+    },
+
+    viewPreviousFlights() {
+      alert("Flights functionality will be implemented later.");
+    },
+    viewPreviousRents() {
+      alert("Rents functionality will be implemented later.");
+    },
+    viewPreviousShuttles() {
+      alert("Shuttles functionality will be implemented later.");
+    },
+    async fetchUserDetails() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        this.username = userData.firstName || "Anonymous User";
+      }
+    },
+    async mounted() {
+      this.fetchUserDetails();
     },
     goToHomePage() {
       // Redirect to home page
@@ -81,6 +109,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .about {
@@ -175,5 +204,22 @@ export default {
 
 .back-button:hover {
   background-color: #6d00a7;
+}
+
+.profile-header {
+  text-align: center;
+}
+
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 20px auto;
+  border: 3px solid white;
+}
+
+.profile-buttons button {
+  margin: 10px;
 }
 </style>

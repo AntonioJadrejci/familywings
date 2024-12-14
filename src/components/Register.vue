@@ -79,6 +79,10 @@
 </template>
 
 <script>
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
+const db = getFirestore();
 export default {
   data() {
     return {
@@ -90,21 +94,35 @@ export default {
     };
   },
   methods: {
-    handleRegister() {
-      if (
-        this.firstName &&
-        this.email &&
-        this.password &&
-        this.confirmPassword
-      ) {
-        if (this.password === this.confirmPassword) {
-          alert(`Registration successful for ${this.firstName}!`);
-          // Implement registration logic here
+    async handleRegister() {
+      if (this.password !== this.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      const auth = getAuth();
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          this.email,
+          this.password
+        );
+        const user = userCredential.user;
+
+        // Store user info in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          firstName: this.firstName,
+          email: this.email,
+        });
+
+        alert("Registration successful!");
+        this.$router.push("/profilepage");
+      } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+          alert("This email is already taken!");
         } else {
-          alert("Passwords do not match.");
+          console.error("Registration error:", error.message);
         }
-      } else {
-        alert("Please fill in all fields.");
       }
     },
     goToHomePage() {
