@@ -127,8 +127,20 @@ export default {
     },
   },
   mounted() {
-    onAuthStateChanged(auth, (user) => {
-      this.isLoggedIn = !!user;
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        this.isLoggedIn = true;
+
+        // Load username and profile image from localStorage
+        this.profileImage =
+          localStorage.getItem("profileImage") ||
+          require("@/assets/EmptyProfile.png");
+        this.username = localStorage.getItem("username") || "Anonymous User";
+      } else {
+        this.isLoggedIn = false;
+        this.profileImage = null;
+        this.username = "Anonymous User";
+      }
     });
   },
 };

@@ -17,18 +17,17 @@
       <div class="text-container">
         <div class="profile-header">
           <h1>My Profile</h1>
+          <h2>{{ username || "Anonymous User" }}</h2>
           <img
             :src="profileImage || require('@/assets/EmptyProfile.png')"
             alt="Profile"
             class="profile-picture"
           />
-
           <input
             type="file"
             class="form-control mt-2"
             @change="uploadProfileImage"
           />
-          <h2>{{ username || "Anonymous User" }}</h2>
         </div>
         <div class="profile-buttons">
           <button class="btn btn-primary" @click="viewPreviousFlights">
@@ -49,17 +48,49 @@
 
 <script>
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth, storage } from "@/firebase";
 
 export default {
   data() {
     return {
       profileImage: null,
-      username: "Anonymous User", // Replace with actual user data
+      username: "Anonymous User",
     };
   },
   methods: {
+    // Dohvati korisničke podatke iz Firestore-a
+    async fetchUserDetails(user) {
+      const db = getFirestore();
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        this.username = userData.firstName || "Anonymous User";
+
+        // Dohvati profilnu sliku
+        this.profileImage =
+          userData.profileImage ||
+          (await this.getStorageProfileImage(user.uid)) ||
+          require("@/assets/EmptyProfile.png");
+      }
+    },
+
+    // Dohvati profilnu sliku iz Firebase Storage
+    async getStorageProfileImage(userId) {
+      const storageRef = ref(storage, `profileImages/${userId}`);
+      try {
+        return await getDownloadURL(storageRef);
+      } catch (error) {
+        if (error.code === "storage/object-not-found") {
+          return require("@/assets/EmptyProfile.png"); // Default slika
+        }
+        console.error("Error fetching profile image:", error);
+        return null;
+      }
+    },
+
+    // Uploadaj novu sliku
     async uploadProfileImage(event) {
       const file = event.target.files[0];
       const user = auth.currentUser;
@@ -70,20 +101,28 @@ export default {
       }
 
       const storageRef = ref(storage, `profileImages/${user.uid}`);
+      const db = getFirestore();
+
       try {
-        // Upload the file to Firebase Storage
+        // Uploadaj sliku u Storage
         await uploadBytes(storageRef, file);
 
-        // Fetch the download URL of the uploaded image
+        // Dohvati URL uploadane slike
         const url = await getDownloadURL(storageRef);
 
-        // Set the image in the component and store it in Firestore (if required)
+        // Ažuriraj Firestore s novim URL-om slike
+        await updateDoc(doc(db, "users", user.uid), { profileImage: url });
         this.profileImage = url;
 
         alert("Profile image uploaded successfully!");
       } catch (error) {
         console.error("Error uploading profile image:", error);
+        alert("Failed to upload profile image.");
       }
+    },
+
+    goToHomePage() {
+      this.$router.push("/");
     },
 
     viewPreviousFlights() {
@@ -95,30 +134,17 @@ export default {
     viewPreviousShuttles() {
       alert("Shuttles functionality will be implemented later.");
     },
-    async fetchUserDetails() {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const db = getFirestore();
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        this.username = userData.firstName || "Anonymous User";
-
-        // Fetch and display the profile image
-        try {
-          const storageRef = ref(storage, `profileImages/${user.uid}`);
-          this.profileImage = await getDownloadURL(storageRef);
-        } catch {
-          this.profileImage = require("@/assets/EmptyProfile.png"); // Default image
-        }
+  },
+  mounted() {
+    // Koristi onAuthStateChanged za sigurnu provjeru korisnika
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.fetchUserDetails(user);
+      } else {
+        this.username = "Anonymous User";
+        this.profileImage = require("@/assets/EmptyProfile.png");
       }
-    },
-    goToHomePage() {
-      // Redirect to home page
-      this.$router.push("/");
-    },
+    });
   },
 };
 </script>

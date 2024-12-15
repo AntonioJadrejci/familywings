@@ -59,6 +59,7 @@
 
 <script>
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore"; // Dodan import
 
 export default {
   data() {
@@ -70,21 +71,37 @@ export default {
   methods: {
     async handleLogin() {
       const auth = getAuth();
+      const db = getFirestore();
+
       try {
-        await signInWithEmailAndPassword(auth, this.email, this.password);
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          this.email,
+          this.password
+        );
+        const user = userCredential.user;
+
+        // Fetch user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+
+          // Store user data locally
+          localStorage.setItem("profileImage", userData.profileImage || "");
+          localStorage.setItem(
+            "username",
+            userData.firstName || "Anonymous User"
+          );
+        }
+
         alert("Login successful!");
         this.$router.push("/profilepage");
       } catch (error) {
-        if (
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/user-not-found"
-        ) {
-          alert("Wrong email or password!");
-        } else {
-          console.error("Login error:", error.message);
-        }
+        console.error("Login error:", error);
+        alert("An error occurred during login. Please try again.");
       }
     },
+
     goToHomePage() {
       // Redirect to home page
       this.$router.push("/");

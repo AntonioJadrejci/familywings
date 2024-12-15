@@ -101,6 +101,8 @@ export default {
       }
 
       const auth = getAuth();
+      const db = getFirestore();
+
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -109,22 +111,21 @@ export default {
         );
         const user = userCredential.user;
 
-        // Store user info in Firestore
+        // Store user data in Firestore
         await setDoc(doc(db, "users", user.uid), {
           firstName: this.firstName,
           email: this.email,
+          profileImage: "", // Default profile image
         });
 
         alert("Registration successful!");
         this.$router.push("/profilepage");
       } catch (error) {
-        if (error.code === "auth/email-already-in-use") {
-          alert("This email is already taken!");
-        } else {
-          console.error("Registration error:", error.message);
-        }
+        console.error("Registration error:", error);
+        alert("An error occurred during registration. Please try again.");
       }
     },
+
     goToHomePage() {
       // Redirect to home page
       this.$router.push("/");
