@@ -22,6 +22,7 @@
             alt="Profile"
             class="profile-picture"
           />
+
           <input
             type="file"
             class="form-control mt-2"
@@ -70,9 +71,16 @@ export default {
 
       const storageRef = ref(storage, `profileImages/${user.uid}`);
       try {
+        // Upload the file to Firebase Storage
         await uploadBytes(storageRef, file);
+
+        // Fetch the download URL of the uploaded image
         const url = await getDownloadURL(storageRef);
+
+        // Set the image in the component and store it in Firestore (if required)
         this.profileImage = url;
+
+        alert("Profile image uploaded successfully!");
       } catch (error) {
         console.error("Error uploading profile image:", error);
       }
@@ -97,10 +105,15 @@ export default {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         this.username = userData.firstName || "Anonymous User";
+
+        // Fetch and display the profile image
+        try {
+          const storageRef = ref(storage, `profileImages/${user.uid}`);
+          this.profileImage = await getDownloadURL(storageRef);
+        } catch {
+          this.profileImage = require("@/assets/EmptyProfile.png"); // Default image
+        }
       }
-    },
-    async mounted() {
-      this.fetchUserDetails();
     },
     goToHomePage() {
       // Redirect to home page
