@@ -295,6 +295,9 @@ import { nextTick } from "vue";
 import { TempusDominus } from "@eonasdan/tempus-dominus";
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 export default {
   data() {
     return {
@@ -502,6 +505,7 @@ export default {
             }
           );
         }
+        const pdfBlob = doc.output("blob");
 
         doc.save("shuttle_bus_ticket.pdf");
       };

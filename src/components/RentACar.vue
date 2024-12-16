@@ -314,6 +314,9 @@ import { nextTick } from "vue";
 import { TempusDominus } from "@eonasdan/tempus-dominus";
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 export default {
   data() {
     return {
@@ -542,6 +545,7 @@ export default {
       doc.text("Thank you for choosing FamilyWings Rent-a-Car!", 105, 280, {
         align: "center",
       });
+      const pdfBlob = doc.output("blob");
 
       doc.save("rent_a_car_ticket.pdf");
     },

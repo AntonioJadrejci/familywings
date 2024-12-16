@@ -796,6 +796,9 @@ import { nextTick } from "vue";
 import { TempusDominus } from "@eonasdan/tempus-dominus";
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default {
   props: {
@@ -1533,6 +1536,8 @@ export default {
       }
 
       // Save the PDF
+      const pdfBlob = doc.output("blob"); // Pretvori PDF u blob
+
       doc.save("familywings_tickets.pdf");
     },
     // Rent-a-Car PDF Generation
@@ -1557,6 +1562,7 @@ export default {
       doc.text("Thank you for choosing FamilyWings Rent-a-Car!", 105, 280, {
         align: "center",
       });
+      const pdfBlob = doc.output("blob");
 
       doc.save("rent_a_car_ticket.pdf");
     },
@@ -1590,6 +1596,7 @@ export default {
           }
         );
       }
+      const pdfBlob = doc.output("blob");
 
       doc.save("shuttle_bus_ticket.pdf");
     },

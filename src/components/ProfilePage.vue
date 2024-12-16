@@ -51,6 +51,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, storage } from "@/firebase";
+import { getAuth } from "firebase/auth";
 
 export default {
   data() {
@@ -133,6 +134,50 @@ export default {
     },
     viewPreviousShuttles() {
       alert("Shuttles functionality will be implemented later.");
+    },
+    async viewPreviousFlights() {
+      await this.fetchPreviousPDFs("flights");
+    },
+    async viewPreviousRents() {
+      await this.fetchPreviousPDFs("rents");
+    },
+    async viewPreviousShuttles() {
+      await this.fetchPreviousPDFs("shuttles");
+    },
+    async fetchPreviousPDFs(type) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("You must be logged in to view previous files.");
+        return;
+      }
+
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const data = userDoc.data()[type] || [];
+        this.displayPDFs(data);
+      } else {
+        alert("No data found.");
+      }
+    },
+    displayPDFs(pdfList) {
+      if (pdfList.length === 0) {
+        alert("No PDFs found.");
+        return;
+      }
+
+      pdfList.forEach((pdf) => {
+        const link = document.createElement("a");
+        link.href = pdf.url;
+        link.textContent = pdf.name;
+        link.target = "_blank";
+        document.body.appendChild(link);
+        document.body.appendChild(document.createElement("br"));
+      });
     },
   },
   mounted() {
