@@ -31,13 +31,13 @@
         </div>
         <div class="profile-buttons">
           <button class="btn btn-primary" @click="viewPreviousFlights">
-            Previous Flights
+            Last Flight
           </button>
           <button class="btn btn-primary" @click="viewPreviousRents">
-            Previous Rents
+            Last Car Rent
           </button>
           <button class="btn btn-primary" @click="viewPreviousShuttles">
-            Previous Shuttles
+            Previous Shuttle
           </button>
         </div>
         <button class="back-button" @click="goToHomePage">Back</button>
@@ -126,25 +126,16 @@ export default {
       this.$router.push("/");
     },
 
-    viewPreviousFlights() {
-      alert("Flights functionality will be implemented later.");
-    },
-    viewPreviousRents() {
-      alert("Rents functionality will be implemented later.");
-    },
-    viewPreviousShuttles() {
-      alert("Shuttles functionality will be implemented later.");
-    },
     async viewPreviousFlights() {
-      await this.fetchPreviousPDFs("flights");
+      await this.fetchLastPDF("flighttickets");
     },
     async viewPreviousRents() {
-      await this.fetchPreviousPDFs("rents");
+      await this.fetchLastPDF("rents");
     },
     async viewPreviousShuttles() {
-      await this.fetchPreviousPDFs("shuttles");
+      await this.fetchLastPDF("shuttles");
     },
-    async fetchPreviousPDFs(type) {
+    async fetchLastPDF(category) {
       const auth = getAuth();
       const user = auth.currentUser;
 
@@ -158,26 +149,31 @@ export default {
       const userDoc = await getDoc(userRef);
 
       if (userDoc.exists()) {
-        const data = userDoc.data()[type] || [];
-        this.displayPDFs(data);
+        const data = userDoc.data()[category.toLowerCase()] || [];
+        if (data.length === 0) {
+          alert(`No PDFs found in ${category} category.`);
+          return;
+        }
+
+        // Dohvati zadnji PDF
+        const lastPDF = data[data.length - 1];
+        if (lastPDF.url) {
+          this.downloadPDF(lastPDF.name, lastPDF.url);
+        } else {
+          alert("The PDF URL is missing or invalid.");
+        }
       } else {
-        alert("No data found.");
+        alert("No data found for the current user.");
       }
     },
-    displayPDFs(pdfList) {
-      if (pdfList.length === 0) {
-        alert("No PDFs found.");
-        return;
-      }
-
-      pdfList.forEach((pdf) => {
-        const link = document.createElement("a");
-        link.href = pdf.url;
-        link.textContent = pdf.name;
-        link.target = "_blank";
-        document.body.appendChild(link);
-        document.body.appendChild(document.createElement("br"));
-      });
+    downloadPDF(name, url) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = name;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
   mounted() {
