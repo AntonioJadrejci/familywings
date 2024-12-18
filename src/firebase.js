@@ -9,7 +9,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyDF47RZbZsjhBwPCk-vRow-mysVpZ-9OgE",
     authDomain: "familywings-7cb24.firebaseapp.com",
     projectId: "familywings-7cb24",
-    storageBucket: "familywings-7cb24.appspot.com",
+    storageBucket: "familywings-7cb24.firebasestorage.app",
     messagingSenderId: "826029832235",
     appId: "1:826029832235:web:be795860a94cecfdc7926e",
     measurementId: "G-9BSC6JPLGT"

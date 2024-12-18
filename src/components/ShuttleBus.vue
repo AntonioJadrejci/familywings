@@ -295,9 +295,15 @@ import { nextTick } from "vue";
 import { TempusDominus } from "@eonasdan/tempus-dominus";
 import jsPDF from "jspdf";
 import JsBarcode from "jsbarcode";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import { getFirestore, doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { storage } from "@/firebase.js";
+
 export default {
   data() {
     return {
@@ -369,6 +375,43 @@ export default {
     },
   },
   methods: {
+    async savePdfToFirebase(category, fileName, pdfBlob) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.error("User not logged in");
+        return;
+      }
+
+      const storageReference = storageRef(
+        storage,
+        `pdfs/${user.uid}/${category}/${fileName}`
+      );
+
+      try {
+        // Upload PDF
+        await uploadBytes(storageReference, pdfBlob);
+
+        // Get the download URL
+        const pdfUrl = await getDownloadURL(storageReference);
+
+        // Update Firestore with the PDF URL
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", user.uid);
+
+        await updateDoc(userDocRef, {
+          [category.toLowerCase()]: arrayUnion({ name: fileName, url: pdfUrl }),
+        });
+
+        console.log(
+          `PDF successfully saved to Firebase under category: ${category}`
+        );
+      } catch (error) {
+        console.error("Error saving PDF to Firebase:", error);
+      }
+    },
+
     getDynamicMinDate() {
       const today = new Date();
       today.setDate(today.getDate() + 1);
@@ -480,7 +523,7 @@ export default {
       const logoImage = new Image();
       logoImage.src = require("@/assets/Naslov4.png");
 
-      // Pričekaj da se logo učita
+      // Koristi arrow funkciju za pristup `this` kontekstu
       logoImage.onload = () => {
         for (let i = 0; i < this.ticketCount; i++) {
           if (i > 0) doc.addPage();
@@ -505,11 +548,16 @@ export default {
             }
           );
         }
-        const pdfBlob = doc.output("blob");
 
+        // Generiraj PDF Blob
+        const pdfBlob = doc.output("blob");
         doc.save("shuttle_bus_ticket.pdf");
+
+        // Pozovi `savePdfToFirebase`
+        this.savePdfToFirebase("Shuttles", "shuttle_bus_ticket.pdf", pdfBlob);
       };
     },
+
     confirmShuttleBus() {
       this.shuttleBusConfirmed = true;
       this.rentACarConfirmed = false;
