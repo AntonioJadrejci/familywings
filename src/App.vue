@@ -256,11 +256,13 @@ nav {
 }
 
 .menu-button {
+  position: absolute;
+  top: 25px; /* Adjust for desired vertical position */
+  right: 25px; /* Move closer to the right edge */
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  margin-left: 20px;
   font-size: 20px;
 }
 
