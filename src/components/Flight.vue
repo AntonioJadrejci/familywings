@@ -291,7 +291,7 @@
         >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
-            <h3>Checked Bag x 2</h3>
+            <h3>Checked Bag x 1</h3>
             <p>MAX 20 KG</p>
             <p>99 x 119 x 171 cm</p>
             <p>25 €</p>
@@ -307,7 +307,7 @@
         >
           <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
-            <h3>Checked Bag x 2</h3>
+            <h3>Checked Bag x 1</h3>
             <p>MAX 32 KG</p>
             <p>81 x 119 x 171 cm</p>
             <p>35 €</p>
