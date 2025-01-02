@@ -257,7 +257,8 @@
           @mouseout="hoveredLuggageType = ''"
           @click="selectLuggage(luggageTypes[0])"
         >
-          <img src="@/assets/Baggage.png" alt="Carry-On Bag" />
+          <img :src="require('@/assets/Baggage.png')" alt="Carry-On Bag" />
+
           <div class="luggage-details">
             <h3>Carry-On Bag x 1</h3>
             <p>MAX 10 KG</p>
