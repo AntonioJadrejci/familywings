@@ -257,8 +257,7 @@
           @mouseout="hoveredLuggageType = ''"
           @click="selectLuggage(luggageTypes[0])"
         >
-          <img :src="require('@/assets/Baggage.png')" alt="Carry-On Bag" />
-
+          <img src="@/assets/Baggage.png" alt="Carry-On Bag" />
           <div class="luggage-details">
             <h3>Carry-On Bag x 1</h3>
             <p>MAX 10 KG</p>
@@ -274,7 +273,7 @@
           @mouseout="hoveredLuggageType = ''"
           @click="selectLuggage(luggageTypes[1])"
         >
-          <img src="require('../assets/Baggage.png')" alt="Trolley Bag" />
+          <img src="@/assets/Baggage.png" alt="Trolley Bag" />
           <div class="luggage-details">
             <h3>Trolley Bag x 1</h3>
             <p>MAX 10 KG</p>
@@ -290,7 +289,7 @@
           @mouseout="hoveredLuggageType = ''"
           @click="selectLuggage(luggageTypes[2])"
         >
-          <img src="require('../assets/Baggage.png')" alt="Checked Bag" />
+          <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
             <h3>Checked Bag x 1</h3>
             <p>MAX 20 KG</p>
@@ -306,7 +305,7 @@
           @mouseout="hoveredLuggageType = ''"
           @click="selectLuggage(luggageTypes[3])"
         >
-          <img src="require('../assets/Baggage.png')" alt="Checked Bag" />
+          <img src="@/assets/Baggage.png" alt="Checked Bag" />
           <div class="luggage-details">
             <h3>Checked Bag x 1</h3>
             <p>MAX 32 KG</p>
